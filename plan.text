@@ -1,0 +1,134 @@
+# Dark Mode Switch Implementation
+
+Add a dark mode toggle to the sidebar and adapt all screens/components to correctly render in both light and dark modes.
+
+## Background
+
+The project already has solid foundations for dark mode:
+- [index.css](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/index.css) already defines CSS custom properties for both `:root` (light) and `.dark` (dark) selectors (lines 45–114), with `@custom-variant dark (&:is(.dark *))` on line 4
+- [globalSlice.js](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/store/slices/globalSlice.js) already has `toggleTheme`/`setTheme` Redux actions that toggle the `.dark` class on `<html>` and persist to `localStorage`
+- The Redux store already registers the `global` reducer in [store/index.js](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/store/index.js)
+
+**The problem**: None of this is wired up in the UI, and virtually every component uses hardcoded Tailwind `bg-white`, `text-gray-900`, `bg-gray-50`, `border-gray-200`, etc. instead of the CSS variable-backed semantic classes (`bg-background`, `text-foreground`, `bg-card`, `text-card-foreground`, `bg-muted`, `border-border`, etc.).
+
+## Proposed Changes
+
+### Phase 1 — Theme Initialization & Dark Mode Switch
+
+#### [MODIFY] [App.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/App.jsx)
+- Dispatch `setTheme(localStorage.getItem('theme') || 'light')` on mount so that on page reload the `.dark` class is applied to `<html>` before any component renders.
+
+#### [NEW] [useTheme.js](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/hooks/useTheme.js)
+- Custom hook that reads `theme` from Redux store and exposes `{ theme, isDark, toggleTheme }`.
+- Simple wrapper for ergonomic use in components.
+
+#### [MODIFY] [Sidebar.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/components/layout/Sidebar.jsx)
+- Add a dark mode toggle row between the nav and user section — a subtle `Sun/Moon` icon toggle with animated transition.
+- Wire it to `useTheme().toggleTheme`.
+
+---
+
+### Phase 2 — Core Layout Adaptation
+
+#### [MODIFY] [Layout.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/components/Layout.jsx)
+- Replace hardcoded `bg-white`, `text-gray-900` with `bg-background`, `text-foreground`.
+- Update the floating menu toggle button colors.
+- Update content area background.
+
+#### [MODIFY] [index.css](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/index.css)
+- Add dark-mode scrollbar styles for `.discrete-scrollbar`.
+- Ensure the `body` layer uses the theme tokens.
+
+---
+
+### Phase 3 — Sidebar & SidebarItem Dark Mode
+
+#### [MODIFY] [Sidebar.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/components/layout/Sidebar.jsx)
+- Replace `bg-white`, `border-gray-200`, `text-gray-*`, `hover:bg-gray-*` with dark-aware variants (`dark:bg-gray-900`, `dark:border-gray-700`, `dark:text-gray-300`, etc.).
+- Update user section, user menu popup colors.
+
+#### [MODIFY] [SidebarItem.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/SidebarItem/SidebarItem.jsx)
+- Add dark variants to the inactive state classes (`dark:text-gray-400`, `dark:hover:bg-gray-800`, `dark:hover:text-gray-200`).
+- Update icon colors for dark mode.
+
+---
+
+### Phase 4 — Screen-by-Screen Adaptation
+
+Each screen has the same pattern of hardcoded light colors that need dark mode alternatives:
+
+#### [MODIFY] [Home.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/Home/Home.jsx)
+- Update inline styles: heading color `#0f172a` → use CSS variable, description `#64748b`, card `backgroundColor: '#fff'` / `border: '1px solid #e2e8f0'` → add dark variants.
+- Greeting chip: `backgroundColor: '#fff7ed'` → dark-aware.
+- Card hover shadow and text colors.
+
+#### [MODIFY] [CompanyInfo.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/CompanyInfo/CompanyInfo.jsx)
+- Replace `bg-white`, `text-gray-900`, `bg-gray-50/50`, `border-gray-100` → dark variants.
+- Sticky header `bg-white` → `bg-background`.
+- Card header backgrounds.
+
+#### [MODIFY] [Geofence.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/Geofence/Geofence.jsx)
+- Same pattern: card backgrounds, text colors, header icon backgrounds, preset buttons, info footer.
+
+#### [MODIFY] [CompanyServices.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/CompanyServices/CompanyServices.jsx)
+- Table header/row backgrounds, modal backgrounds, form inputs.
+
+#### [MODIFY] [Users.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/admin/Users/Users.jsx)
+- Same table/modal pattern.
+
+#### [MODIFY] [ApiKey.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/admin/ApiKey/ApiKey.jsx)
+- Card and info box backgrounds, modal backgrounds.
+
+#### [MODIFY] [AppointmentLayouts.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/AppointmentLayouts/AppointmentLayouts.jsx)
+- Tab bar backgrounds, workspace backgrounds.
+
+#### [MODIFY] [LayoutList.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/AppointmentLayouts/components/LayoutList.jsx)
+- List card backgrounds, hover states, delete modal.
+
+#### [MODIFY] [LayoutEditorHeader.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/AppointmentLayouts/components/LayoutEditorHeader.jsx)
+- Header bar backgrounds, input fields.
+
+#### [MODIFY] [NotFound.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/NotFound/NotFound.jsx)
+- Right panel `backgroundColor: '#fff'` → dark variant, text colors `#0f172a`, `#64748b`, pills.
+
+#### [MODIFY] [LoginPage.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/LoginPage/LoginPage.jsx)
+- Right panel `backgroundColor: '#fff'` → dark variant, form field backgrounds `#f1f5f9`, label colors, input text colors.
+
+#### [MODIFY] [LoadingState.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/components/LoadingState.jsx)
+- `bg-slate-50/50` → add dark variant.
+
+---
+
+### Phase 5 — Shared UI Components
+
+#### [MODIFY] [ActionButton.jsx](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/components/ui/ActionButton.jsx)
+- No changes needed — uses `colors.primary` which is brand-specific and stays consistent.
+
+#### [MODIFY] Various sub-components in [AppointmentLayouts/components/](file:///c:/Users/rafae/Documents/GateIn/web/gatein-webapp/src/screens/AppointmentLayouts/components)
+- `SharedComponents.jsx`, `CardLayoutBuilder.jsx`, `CardEditorComponents.jsx`, `ModalLayoutBuilder.jsx`, `ModalEditorComponents.jsx`, `LayoutPreviewPanel.jsx` — add dark variants to hardcoded Tailwind classes.
+
+> [!IMPORTANT]
+> **Strategy for inline styles vs Tailwind**: Many screens (Home, NotFound, LoginPage) use extensive **inline styles** with hardcoded hex colors. For these, I'll use a CSS class approach or conditional dark-mode styles via the `useTheme` hook, since Tailwind `dark:` variants don't work with inline `style={}` attributes.
+
+> [!NOTE]
+> **Preview panel exception**: The phone mockup previews in the LayoutEditor (CardPreview, ModalPreview, LayoutPreviewPanel) simulate mobile app rendering and should NOT be affected by dark mode — they always show the light app UI as it would appear on the user's phone.
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Login and 404 pages**: These are full-page standalone layouts (split left-orange/right-white). Should the dark mode also affect the **right panel** of these pages (making it dark), or should they remain as-is since they're public-facing brand pages?
+> My recommendation: Apply dark mode to the right panel to stay consistent. The left orange brand panel stays the same.
+
+## Verification Plan
+
+### Manual Verification
+1. Toggle the dark mode switch in the sidebar — verify immediate theme change
+2. Refresh the page — verify theme persists via `localStorage`
+3. Navigate through every screen and verify:
+   - All backgrounds are dark
+   - All text is legible
+   - Cards, tables, modals, form inputs all have proper dark backgrounds
+   - No "white flash" artifacts
+   - Colored elements (orange icons, status badges) remain visible
+4. Verify the sidebar toggle animation is smooth
+5. Verify the Login and NotFound pages render correctly in both modes
