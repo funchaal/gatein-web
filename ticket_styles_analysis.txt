@@ -1,0 +1,436 @@
+================================================================================
+TICKET COMPONENTS - LAYOUT & STYLES COMPARISON AND CSS TRANSLATION
+================================================================================
+
+This file contains the detailed layout analysis and style specifications of each component in gatein-app/src/screens/Ticket/components, followed by its exact vanilla CSS equivalent.
+
+--------------------------------------------------------------------------------
+1. DividerElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    dividerWrapper: { marginVertical: 18 }
+    dividerLabeled: { flexDirection: 'row', alignItems: 'center', gap: 8 }
+    dividerLine: { height: 1, backgroundColor: '#E2E8F0', flex: 1 }
+    dividerLabel: {
+        fontSize: 12,
+        fontWeight: '700',
+        color: THEME.slate400, // '#94A3B8'
+        textTransform: 'uppercase',
+        letterSpacing: 0.8,
+    }
+
+Vanilla CSS translation:
+    .divider-wrapper {
+        margin-top: 18px;
+        margin-bottom: 18px;
+        width: 100%;
+    }
+    .divider-labeled {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+    .divider-line {
+        height: 1px;
+        background-color: #E2E8F0;
+        flex: 1;
+    }
+    .divider-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        white-space: nowrap;
+    }
+
+--------------------------------------------------------------------------------
+2. FieldElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    fieldRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 6,
+        marginVertical: 0,
+    }
+    fieldLabel: {
+        fontSize: 16,
+        color: THEME.slate400, // '#94A3B8'
+        fontWeight: '500',
+        marginBottom: 2,
+    }
+    fieldValue: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#334155',
+    }
+
+Vanilla CSS translation:
+    .field-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        margin-top: 0;
+        margin-bottom: 0;
+        width: 100%;
+    }
+    .field-label {
+        font-size: 16px;
+        color: #94A3B8;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+    .field-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+--------------------------------------------------------------------------------
+3. SectionElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    sectionWrapper: { marginTop: 18, marginBottom: 8 }
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: THEME.slate900, // '#0F172A'
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 4,
+    }
+
+Vanilla CSS translation:
+    .section-wrapper {
+        margin-top: 18px;
+        margin-bottom: 8px;
+        width: 100%;
+    }
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+--------------------------------------------------------------------------------
+4. TagContainerElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    tagContainer: { marginVertical: 12 }
+    tagContainerLabel: {
+        fontSize: 12,
+        fontWeight: '700',
+        color: THEME.slate400, // '#94A3B8'
+        textTransform: 'uppercase',
+        letterSpacing: 0.8,
+        marginBottom: 8,
+    }
+    tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }
+    tag: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        maxWidth: '100%',
+    }
+    tagText: { 
+        fontSize: 12, 
+        fontWeight: '700',
+        flexShrink: 1,
+    }
+
+Vanilla CSS translation:
+    .tag-container {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+    .tag-container-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+    }
+    .tag-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+    }
+    .tag {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        border-radius: 8px;
+        max-width: 100%;
+    }
+    .tag-text {
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 1;
+        text-transform: uppercase;
+    }
+
+--------------------------------------------------------------------------------
+5. AttentionElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    attentionBox: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        borderRadius: 12,
+        borderWidth: 1,
+        padding: 14,
+        marginVertical: 12,
+    }
+    attentionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 3 }
+    attentionText: { fontSize: 14, fontWeight: '500', lineHeight: 18 }
+
+Vanilla CSS translation:
+    .attention-box {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        padding: 14px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+    .attention-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+    .attention-text {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 18px;
+    }
+
+--------------------------------------------------------------------------------
+6. InstructionElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    instructionWrapper: { marginVertical: 12 }
+    instructionTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: THEME.slate400, // '#94A3B8'
+        marginBottom: 16,
+        textAlign: 'center'
+    }
+    instructionStep: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    }
+    instructionBullet: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#475569',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 12,
+    }
+    instructionBulletText: { fontSize: 12, fontWeight: '800', color: '#FFFFFF' }
+    instructionStepText: {
+        flex: 1,
+        fontSize: 14,
+        color: '#334155',
+        lineHeight: 20,
+        fontWeight: '500',
+    }
+
+Vanilla CSS translation:
+    .instruction-wrapper {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+    .instruction-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #94A3B8;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+    .instruction-step {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+    .instruction-bullet {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        background-color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+    .instruction-bullet-text {
+        font-size: 12px;
+        font-weight: 800;
+        color: #FFFFFF;
+    }
+    .instruction-step-text {
+        flex: 1;
+        font-size: 14px;
+        color: #334155;
+        line-height: 20px;
+        font-weight: 500;
+    }
+
+--------------------------------------------------------------------------------
+7. TextElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    freeText: {
+        color: THEME.slate600, // '#475569'
+        lineHeight: 20,
+        marginVertical: 12,
+    }
+
+Vanilla CSS translation:
+    .free-text {
+        color: #475569;
+        line-height: 20px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+
+--------------------------------------------------------------------------------
+8. HighlightElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    highlightBox: {
+        borderRadius: 14,
+        borderWidth: 1.5,
+        padding: 16,
+        alignItems: 'flex-start',
+        flex: 1,
+        minWidth: (width - 80) / 2,
+        margin: 0,
+    }
+    highlightLabel: {
+        fontSize: 13,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 0.8,
+        marginBottom: 6,
+        opacity: 0.7,
+    }
+    highlightValue: {
+        fontSize: 36,
+        fontWeight: '900',
+        letterSpacing: -0.5,
+    }
+    highlightCaption: {
+        fontSize: 13,
+        fontWeight: '500',
+        marginTop: 4,
+        opacity: 0.7,
+    }
+
+Vanilla CSS translation:
+    .highlight-box {
+        border-radius: 14px;
+        border-width: 1.5px;
+        border-style: solid;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+        min-width: 140px;
+        margin: 0;
+    }
+    .highlight-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
+        opacity: 0.7;
+    }
+    .highlight-value {
+        font-size: 36px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        line-height: 1;
+    }
+    .highlight-caption {
+        font-size: 13px;
+        font-weight: 500;
+        margin-top: 4px;
+        opacity: 0.7;
+    }
+
+--------------------------------------------------------------------------------
+9. HighlightGridElement.jsx
+--------------------------------------------------------------------------------
+React Native Styles:
+    gridWrapper: { marginVertical: 12 }
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    }
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: THEME.slate900, // '#0F172A'
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 4,
+    }
+
+Vanilla CSS translation:
+    .grid-wrapper {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+    .grid {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+    }
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+================================================================================

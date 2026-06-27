@@ -14,6 +14,8 @@ import {
   ChevronsLeft,
   Sun,
   Moon,
+  Bell,
+  Ticket,
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -83,6 +85,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
           />
         )}
 
+        {can('ticket_layouts', 'read') && (
+          <SidebarItem
+            icon={Ticket}
+            label="Ticket Layouts"
+            to="/ticket-layouts"
+            active={activeTab === '/ticket-layouts'}
+          />
+        )}
+
         {/* Geofence: exclusivo terminal */}
         {can('geofence', 'read') && (
           <SidebarItem icon={MapPin} label="Geofence" to="/geofence" active={activeTab === '/geofence'} />
@@ -94,6 +105,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
 
         {can('services', 'read') && (
           <SidebarItem icon={Server} label="Serviços" to="/services" active={activeTab === '/services'} />
+        )}
+
+        {can('announcements', 'read') && (
+          <SidebarItem icon={Bell} label="Avisos" to="/announcements" active={activeTab === '/announcements'} />
         )}
 
         {/* Seção admin */}

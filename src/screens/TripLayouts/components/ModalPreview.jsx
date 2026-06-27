@@ -70,6 +70,55 @@ export function ModalPreview({ data, config }) {
             <span style={styles.idText}>#{displayId}</span>
           </div>
 
+          {/* --- Trip Route Tracker (Custom Visual element) --- */}
+          {(() => {
+            const origin = get(data, "origin_city") || "Macae - RJ";
+            const destination = get(data, "destination_city") || "Santos - SP";
+            return (
+              <div style={{
+                width: "100%",
+                marginTop: 16,
+                marginBottom: 16,
+                boxSizing: "border-box",
+                fontFamily: "sans-serif"
+              }}>
+                <div style={{
+                  marginBottom: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 11,
+                  fontWeight: "700",
+                  color: "#9778ff",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.8px"
+                }}>
+                  Rota de Viagem
+                </div>
+                <div style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                  <div style={{ flex: 3 }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>De</div>
+                    <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>
+                  </div>
+                  <div style={{ flex: 4, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
+                    <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
+                    <span style={{ margin: "0 8px", fontSize: 16 }}>\U0001F69A</span>
+                    <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
+                  </div>
+                  <div style={{ flex: 3, textAlign: "right" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>Para</div>
+                    <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{destination}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* --- Hero Section (Title & Subtitle) --- */}
           {config?.card_layout && (headerValue || subHeaderValue) && (
             <div style={styles.heroSection}>

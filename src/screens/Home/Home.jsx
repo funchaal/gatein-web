@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetCompanyInfoQuery } from '@/services/api';
 import {
-  Users, MapPin, Layout, Building, Settings, Key
+  Users, MapPin, Layout, Building, Settings, Key, Ticket
 } from 'lucide-react';
 import { usePermissions } from '@/hooks/usePermissions';
 import { colors } from '@/constants/colors';
@@ -29,6 +29,14 @@ export default function Home() {
       icon: Layout,
       path: '/layouts',
       permission: isTerminal ? 'appointment_layouts' : 'trip_layouts',
+    },
+    {
+      id: 'ticket-layouts',
+      title: 'Ticket Layouts',
+      description: 'Personalize a aparência dos tickets gerados no check-in',
+      icon: Ticket,
+      path: '/ticket-layouts',
+      permission: 'ticket_layouts',
     },
     {
       id: 'geofence',

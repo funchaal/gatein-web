@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useGetLayoutsQuery, useUpsertLayoutMutation, useDeleteLayoutMutation } from "../../services/api";
+import { useGetTripLayoutsQuery, useUpsertTripLayoutMutation, useDeleteTripLayoutMutation } from "../../services/api";
 import { Eye, Code, Database } from "lucide-react";
 import { colors } from "@/constants/colors";
 import { Card } from "@/components/ui/card";
@@ -61,7 +61,7 @@ const cleanLayoutData = (layoutObj) => {
  * Main Layout Editor screen. Acts as the orchestrator and single source of truth (controller)
  * for managing, creating, editing, and previewing application layout schemas.
  */
-export default function AppointmentLayouts() {
+export default function TripLayouts() {
   // ── SCREEN ROUTING STATES ───────────────────────────────────────────
   // Controls current active screen mode: "list" (showing all layouts) or "editor" (editing a layout)
   const [viewMode, setViewMode] = useState("list");
@@ -123,12 +123,12 @@ export default function AppointmentLayouts() {
 
   // ── API DATA SYNC (RTK QUERY) ──────────────────────────────────────
   // Fetch layouts list from backend API
-  const { data: layoutsRes, isLoading: loadingLayouts } = useGetLayoutsQuery();
+  const { data: layoutsRes, isLoading: loadingLayouts } = useGetTripLayoutsQuery();
   const layouts = layoutsRes || [];
 
   // Hooks to create/modify and delete layout schemas
-  const [upsertLayout] = useUpsertLayoutMutation();
-  const [deleteLayout] = useDeleteLayoutMutation();
+  const [upsertTripLayout] = useUpsertTripLayoutMutation();
+  const [deleteTripLayout] = useDeleteTripLayoutMutation();
 
   // Determine mode from the original state tracking
   const isEditing = originalState ? !originalState.isNew : false;
@@ -278,7 +278,7 @@ export default function AppointmentLayouts() {
       return;
     }
     try {
-      await deleteLayout(deletePrompt).unwrap();
+      await deleteTripLayout(deletePrompt).unwrap();
       toast.success("Layout excluído com sucesso.");
       setDeletePrompt(null);
       setDeleteConfirmText("");
@@ -425,7 +425,7 @@ export default function AppointmentLayouts() {
 
     try {
       const cleaned = cleanLayout();
-      await upsertLayout({ ref: saveRef, title: saveTitle, layout_data: cleaned }).unwrap();
+      await upsertTripLayout({ ref: saveRef, title: saveTitle, layout_data: cleaned }).unwrap();
       setSaved(true);
       setOriginalState({
         title: saveTitle,

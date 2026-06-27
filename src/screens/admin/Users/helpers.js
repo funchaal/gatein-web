@@ -5,11 +5,13 @@ export const MODULES_BY_TYPE = {
     { key: 'ticket_layouts',        label: 'Ticket Layouts' },
     { key: 'services',              label: 'Serviços' },
     { key: 'company_information',   label: 'Dados da Empresa' },
+    { key: 'announcements',         label: 'Avisos' },
   ],
   trucking_company: [
     { key: 'trip_layouts',          label: 'Trip Layouts' },
     { key: 'services',              label: 'Serviços' },
     { key: 'company_information',   label: 'Dados da Empresa' },
+    { key: 'announcements',         label: 'Avisos' },
   ],
 };
 

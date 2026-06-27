@@ -61,25 +61,42 @@ export const uid = () => `el_${++_id}_${Math.random().toString(36).slice(2, 6)}`
 export function defaultState() {
   return {
     card_layout: {
-      header: { label: "Motorista", field: "nome_motorista" },
-      sub_header: { label: "Placa", field: "vehicle_plate" },
+      header: { label: "Resumo", field: "summary" },
+      sub_header: { label: "Viagem", field: "ref" },
+      status_tags: [
+        { id: uid(), value: "PLANNED", color: "blue", isNew: true },
+        { id: uid(), value: "IN_PROGRESS", color: "yellow", isNew: true },
+        { id: uid(), value: "COMPLETED", color: "green", isNew: true }
+      ],
       body_rows: [
-        { id: uid(), label: "Transportadora", field: "transportadora" },
-        { id: uid(), label: "Operação", field: "operation_type" },
+        { id: uid(), label: "Placa", field: "vehicle_plate" },
+        { id: uid(), label: "Origem", field: "origin_city" },
+        { id: uid(), label: "Destino", field: "destination_city" },
       ],
     },
     modal_layout: [
       {
         id: uid(),
         element: "section",
-        title: "Detalhes da Operação",
+        title: "Detalhes da Viagem",
         fields: [
           { id: uid(), label: "Resumo", field: "summary" },
-          { id: uid(), label: "Nota Fiscal", field: "nota_fiscal" },
-          { id: uid(), label: "CNH", field: "cnh_motorista" }
+          { id: uid(), label: "Placa", field: "vehicle_plate" },
+          { id: uid(), label: "Origem", field: "origin_city" },
+          { id: uid(), label: "Destino", field: "destination_city" }
         ]
       },
-      { id: uid(), element: "qrcode", title: "Código de Agendamento", field: "ref", caption: "Apresente na portaria" },
+      {
+        id: uid(),
+        element: "section",
+        title: "Carga e Cliente",
+        fields: [
+          { id: uid(), label: "Tipo de Carga", field: "cargo_type" },
+          { id: uid(), label: "Peso da Carga", field: "cargo_weight" },
+          { id: uid(), label: "Cliente", field: "customer_name" }
+        ]
+      },
+      { id: uid(), element: "alert", title: "Instruções Especiais", field: "carrier_notes", color: "yellow", icon: "warning" },
     ],
   };
 }

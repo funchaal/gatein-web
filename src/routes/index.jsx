@@ -1,12 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from '../screens/LoginPage/LoginPage';
 import Home from '../screens/Home/Home';
-import AppointmentLayouts from '../screens/AppointmentLayouts/AppointmentLayouts';
+import LayoutsBridge from '../screens/LayoutsBridge';
+import TicketLayouts from '../screens/TicketLayouts/TicketLayouts';
 import Geofence from '../screens/Geofence/Geofence';
 import CompanyInfo from '../screens/CompanyInfo/CompanyInfo';
 import Users from '../screens/admin/Users/Users';
 import ApiKey from '../screens/admin/ApiKey/ApiKey';
 import CompanyServices from '../screens/CompanyServices/CompanyServices';
+import Announcements from '../screens/Announcements/Announcements';
 import ProtectedRoute from '../components/ProtectedRoute';
 import NotFound from '../screens/NotFound/NotFound';
 import Layout from '../components/Layout';
@@ -22,7 +24,11 @@ const routes = createBrowserRouter([
             },
             {
                 path: 'layouts',
-                element: <AppointmentLayouts />,
+                element: <LayoutsBridge />,
+            },
+            {
+                path: 'ticket-layouts',
+                element: <TicketLayouts />,
             },
             {
                 path: 'geofence',
@@ -39,6 +45,10 @@ const routes = createBrowserRouter([
             {
                 path: 'services',
                 element: <CompanyServices />,
+            },
+            {
+                path: 'announcements',
+                element: <Announcements />,
             },
             {
                 path: 'api-keys',

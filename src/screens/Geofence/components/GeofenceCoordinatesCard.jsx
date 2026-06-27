@@ -31,7 +31,7 @@ export default function GeofenceCoordinatesCard({ config, setConfig, canWrite })
                 }))
               }
               readOnly={!canWrite}
-              step="0.0001"
+              step="any"
               className="font-mono text-sm focus:border-orange-500 focus:ring-orange-500"
             />
           </div>

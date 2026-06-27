@@ -17,12 +17,10 @@ export const ICON_OPTIONS = [
 export const COLOR_OPTIONS = ["purple", "blue", "green", "yellow", "red", "gray"];
 
 export const STATUS_COLORS = {
-  agendado: "#3B82F6",
-  confirmado: "#10B981",
-  cancelado: "#EF4444",
-  "em andamento": "#F59E0B",
-  concluído: "#8B5CF6",
-  pendente: "#6B7280",
+  planned: "#3B82F6",
+  in_progress: "#F59E0B",
+  completed: "#10B981",
+  cancelled: "#EF4444",
 };
 
 export const ELEMENT_META = {
@@ -33,22 +31,22 @@ export const ELEMENT_META = {
 };
 
 export const DEFAULT_EXAMPLE = {
-  terminal_id: "123e4567-e89b-12d3-a456-426614174000",
-  ref: "AGEND-2024-1054",
-  layout_ref: "LAYOUT_DESCARGA_GRAOS",
-  user_tax_id: "12345678000195",
-  operation_type: "DESCARGA",
-  status: "SCHEDULED",
-  summary: "Descarga de 35 toneladas de soja a granel",
+  trucking_company_id: "123e4567-e89b-12d3-a456-426614174000",
+  ref: "VIAGEM-9001",
+  layout_ref: "standard_trip",
   vehicle_plate: "ABC1D23",
-  schedule_start_time: "2024-05-20T14:00:00Z",
-  schedule_end_time: "2024-05-20T16:00:00Z",
+  status: "PLANNED",
+  summary: "Transporte de Carga de Soja",
+  schedule_start_time: "2026-06-27T08:00:00Z",
+  schedule_end_time: "2026-06-27T16:00:00Z",
   schedule_start_tolerance_min: 30,
   schedule_end_tolerance_min: 60,
   custom_data: {
-    nome_motorista: "João da Silva",
-    cnh_motorista: "12345678900",
-    transportadora: "TransLog Logística",
-    nota_fiscal: "987654"
+    origin_city: "Macaé - RJ",
+    destination_city: "Santos - SP",
+    cargo_type: "Sacos de Soja",
+    cargo_weight: "28.5 tons",
+    customer_name: "AgroBrasil Ltda",
+    carrier_notes: "Entregar na doca norte."
   }
 };

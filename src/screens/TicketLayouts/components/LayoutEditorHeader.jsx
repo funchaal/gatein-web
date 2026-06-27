@@ -1,8 +1,7 @@
-import { ArrowLeft, LayoutTemplate, Check, Save } from "lucide-react";
+import { ArrowLeft, Check, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/ActionButton";
 import { Input } from "@/components/ui/input";
-import { colors } from "@/constants/colors";
 
 export default function LayoutEditorHeader({
   handleBackToList,
@@ -30,21 +29,17 @@ export default function LayoutEditorHeader({
           <ArrowLeft className="w-5 h-5" />
         </Button>
 
-        {/* <div className="p-2 rounded-lg shrink-0" style={{ backgroundColor: colors.primary + '1A' }}>
-          <LayoutTemplate className="w-5 h-5" style={{ color: colors.primary }} />
-        </div> */}
-
         <div className="flex flex-col justify-center">
           <span className="text-sm font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
             {isEditing ? (
               <>
-                Editando layout{" "}
-                <em className="text-gray-900 dark:text-gray-100 italic bg-gray-100 dark:bg-gray-800 rounded">
+                Editando Layout de Ticket{" "}
+                <em className="text-gray-900 dark:text-gray-100 italic bg-gray-100 dark:bg-gray-800 rounded px-1">
                   {saveRef}
                 </em>
               </>
             ) : (
-              "Novo Layout"
+              "Novo Layout de Ticket"
             )}
           </span>
         </div>
@@ -63,7 +58,7 @@ export default function LayoutEditorHeader({
             <Input
               value={saveTitle}
               onChange={(e) => setSaveTitle(e.target.value)}
-              placeholder="Ex: Layout Padrão"
+              placeholder="Ex: Layout Portaria Sul"
               className={`text-sm font-mono transition-colors w-full sm:w-48 bg-white dark:bg-zinc-900 ${validation.title || validation.titleExists ? "border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/20 placeholder:text-red-400 dark:placeholder:text-red-300/70" : "placeholder:text-gray-400/70 dark:placeholder:text-gray-600/50"
                 }`}
             />
@@ -85,7 +80,7 @@ export default function LayoutEditorHeader({
             <Input
               value={saveRef}
               onChange={(e) => setSaveRef(e.target.value)}
-              placeholder="Ex: default_layout"
+              placeholder="Ex: portaria_sul"
               disabled={isEditing}
               className={`text-sm font-mono transition-colors w-full sm:w-48 bg-white dark:bg-zinc-900 disabled:opacity-50 disabled:bg-gray-50 dark:disabled:bg-gray-900 ${(validation.ref || validation.refExists) && !isEditing ? "border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/20 placeholder:text-red-400 dark:placeholder:text-red-300/70" : "placeholder:text-gray-400/70 dark:placeholder:text-gray-600/50"
                 }`}

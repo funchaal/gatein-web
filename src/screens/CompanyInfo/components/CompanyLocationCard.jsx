@@ -48,7 +48,7 @@ export default function CompanyLocationCard({ formData, setFormData, canWrite })
                 }
               }}
               readOnly={!canWrite}
-              step="0.0001"
+              step="any"
               className={`font-mono text-sm ${!canWrite ? 'bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400' : ''}`}
             />
           </div>
@@ -67,7 +67,7 @@ export default function CompanyLocationCard({ formData, setFormData, canWrite })
                 }
               }}
               readOnly={!canWrite}
-              step="0.0001"
+              step="any"
               className={`font-mono text-sm ${!canWrite ? 'bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400' : ''}`}
             />
           </div>

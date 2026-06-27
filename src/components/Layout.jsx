@@ -45,6 +45,7 @@ export default function Layout() {
         { id: '/geofence', label: 'Geofence', icon: MapPin },
         { id: '/company', label: 'Dados da Empresa', icon: Building2 },
         { id: '/services', label: 'Serviços', icon: Server },
+        { id: '/announcements', label: 'Avisos', icon: Bell },
         { id: '/users', label: 'Criar Usuário', icon: Plus, admin: true },
         { id: '/api-keys', label: 'API Private Key', icon: KeySquare, admin: true },
     ];

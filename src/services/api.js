@@ -14,7 +14,7 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Auth', 'User', 'Company', 'Geofence', 'Schema', 'Dashboard', 'ApiKey', 'Layout', 'Service'],
+  tagTypes: ['Auth', 'User', 'Company', 'Geofence', 'Schema', 'Dashboard', 'ApiKey', 'Layout', 'TicketLayout', 'Service', 'Announcement'],
   endpoints: (builder) => ({
     // --- AUTH ---
     login: builder.mutation({
@@ -94,6 +94,7 @@ export const api = createApi({
     // --- GEOFENCE ---
     getGeofence: builder.query({
       query: () => '/config/geofence',
+      transformResponse: (res) => res.data,
       providesTags: ['Geofence'],
     }),
     
@@ -160,6 +161,46 @@ export const api = createApi({
       invalidatesTags: ['Layout'],
     }),
 
+    // --- TRIP LAYOUTS ---
+    getTripLayouts: builder.query({
+      query: () => '/config/trip/layouts',
+      transformResponse: (res) => res.data,
+      providesTags: ['Layout'],
+    }),
+    getTripLayoutByRef: builder.query({
+      query: (ref) => `/config/trip/layouts/${ref}`,
+      transformResponse: (res) => res.data,
+      providesTags: ['Layout'],
+    }),
+    upsertTripLayout: builder.mutation({
+      query: (body) => ({ url: '/config/trip/layouts', method: 'PUT', body }),
+      invalidatesTags: ['Layout'],
+    }),
+    deleteTripLayout: builder.mutation({
+      query: (ref) => ({ url: `/config/trip/layouts/${ref}`, method: 'DELETE' }),
+      invalidatesTags: ['Layout'],
+    }),
+
+    // --- TICKET LAYOUTS ---
+    getTicketLayouts: builder.query({
+      query: () => '/config/ticket/layouts',
+      transformResponse: (res) => res.data,
+      providesTags: ['TicketLayout'],
+    }),
+    getTicketLayoutByRef: builder.query({
+      query: (ref) => `/config/ticket/layouts/${ref}`,
+      transformResponse: (res) => res.data,
+      providesTags: ['TicketLayout'],
+    }),
+    upsertTicketLayout: builder.mutation({
+      query: (body) => ({ url: '/config/ticket/layouts', method: 'PUT', body }),
+      invalidatesTags: ['TicketLayout'],
+    }),
+    deleteTicketLayout: builder.mutation({
+      query: (ref) => ({ url: `/config/ticket/layouts/${ref}`, method: 'DELETE' }),
+      invalidatesTags: ['TicketLayout'],
+    }),
+
     // --- SERVICES ---
     getServices: builder.query({
       query: () => '/services',
@@ -181,6 +222,33 @@ export const api = createApi({
     deleteServices: builder.mutation({
       query: (body) => ({ url: '/services', method: 'DELETE', body }),
       invalidatesTags: ['Service'],
+    }),
+
+    // --- ANNOUNCEMENTS ---
+    getAnnouncements: builder.query({
+      query: () => '/announcements',
+      transformResponse: (res) => res.data,
+      providesTags: ['Announcement'],
+    }),
+    createAnnouncement: builder.mutation({
+      query: (body) => ({ url: '/announcements', method: 'POST', body }),
+      invalidatesTags: ['Announcement'],
+    }),
+    updateAnnouncement: builder.mutation({
+      query: ({ id, ...body }) => ({ url: `/announcements/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Announcement'],
+    }),
+    updateAnnouncementStatus: builder.mutation({
+      query: ({ id, is_active }) => ({
+        url: `/announcements/${id}/status`,
+        method: 'PATCH',
+        body: { is_active },
+      }),
+      invalidatesTags: ['Announcement'],
+    }),
+    deleteAnnouncement: builder.mutation({
+      query: (id) => ({ url: `/announcements/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Announcement'],
     }),
   }),
 });
@@ -206,10 +274,29 @@ export const {
   useUpsertLayoutMutation,
   useDeleteLayoutMutation,
 
+  // --- TRIP LAYOUTS ---
+  useGetTripLayoutsQuery,
+  useGetTripLayoutByRefQuery,
+  useUpsertTripLayoutMutation,
+  useDeleteTripLayoutMutation,
+
+  // --- TICKET LAYOUTS ---
+  useGetTicketLayoutsQuery,
+  useGetTicketLayoutByRefQuery,
+  useUpsertTicketLayoutMutation,
+  useDeleteTicketLayoutMutation,
+
   // --- SERVICES ---
   useGetServicesQuery,
   useCreateServiceMutation,
   useUpdateServiceMutation,
   useUpdateServicesStatusMutation,
   useDeleteServicesMutation,
+
+  // --- ANNOUNCEMENTS ---
+  useGetAnnouncementsQuery,
+  useCreateAnnouncementMutation,
+  useUpdateAnnouncementMutation,
+  useUpdateAnnouncementStatusMutation,
+  useDeleteAnnouncementMutation,
 } = api;
