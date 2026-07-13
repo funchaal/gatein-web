@@ -65,7 +65,6 @@ export function defaultState() {
       sub_header: { label: "Placa", field: "vehicle_plate" },
       body_rows: [
         { id: uid(), label: "Transportadora", field: "transportadora" },
-        { id: uid(), label: "Operação", field: "operation_type" },
       ],
     },
     modal_layout: [

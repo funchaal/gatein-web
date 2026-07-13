@@ -23,7 +23,9 @@ export function ModalPreview({ data, config }) {
     statusBadge: { paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6, borderRadius: 8 },
     statusText: { fontSize: 12, fontWeight: 700, textTransform: 'uppercase' },
     idText: { fontSize: 14, fontWeight: 500, color: '#94A3B8' },
-    heroSection: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: 24, paddingTop: 16, backgroundColor: 'white', gap: 2 },
+    heroSection: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: 24, paddingTop: 16, backgroundColor: 'white', gap: 10 },
+    headerGroup: { display: 'flex', flexDirection: 'column', alignSelf: 'stretch', gap: 0 },
+    subHeaderGroup: { display: 'flex', flexDirection: 'column', alignSelf: 'stretch', gap: 0 },
     heroLabel: { fontSize: 16, color: '#94A3B8', width: 110, fontWeight: 500 },
     h1Default: { fontSize: 26, fontWeight: 800, color: '#0F172A' },
     h2Default: { fontSize: 20, fontWeight: 500, color: '#475569' },
@@ -43,115 +45,115 @@ export function ModalPreview({ data, config }) {
 
   return (
     <>
-    <style>{`
+      <style>{`
       .discreet-scroll::-webkit-scrollbar { width: 4px; }
       .discreet-scroll::-webkit-scrollbar-track { background: transparent; }
       .discreet-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     `}</style>
-    <div style={styles.container}>
-      {/* --- Modal Handle Area --- */}
-      <div style={styles.handleArea}>
-        <div style={styles.handleContainer}>
-          <div style={styles.handle} />
-        </div>
-        <div style={styles.displayTime}>
-          {displayTime}
-        </div>
-      </div>
-
-      {/* --- Scrollable Content View --- */}
-      <div className="discreet-scroll" style={styles.scrollView}>
-        <div style={styles.content}>
-          {/* --- Modal Header (Status and ID) --- */}
-          <div style={styles.header}>
-            <div style={{ ...styles.statusBadge, backgroundColor: statusColor + '20' }}>
-              <span style={{ ...styles.statusText, color: statusColor }}>{statusText}</span>
-            </div>
-            <span style={styles.idText}>#{displayId}</span>
+      <div style={styles.container}>
+        {/* --- Modal Handle Area --- */}
+        <div style={styles.handleArea}>
+          <div style={styles.handleContainer}>
+            <div style={styles.handle} />
           </div>
+          <div style={styles.displayTime}>
+            {displayTime}
+          </div>
+        </div>
 
-          {/* --- Trip Route Tracker (Custom Visual element) --- */}
-          {(() => {
-            const origin = get(data, "origin_city") || "Macae - RJ";
-            const destination = get(data, "destination_city") || "Santos - SP";
-            return (
-              <div style={{
-                width: "100%",
-                marginTop: 16,
-                marginBottom: 16,
-                boxSizing: "border-box",
-                fontFamily: "sans-serif"
-              }}>
-                <div style={{
-                  marginBottom: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 11,
-                  fontWeight: "700",
-                  color: "#9778ff",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.8px"
-                }}>
-                  Rota de Viagem
-                </div>
-                <div style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }}>
-                  <div style={{ flex: 3 }}>
-                    <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>De</div>
-                    <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>
-                  </div>
-                  <div style={{ flex: 4, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
-                    <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
-                    <span style={{ margin: "0 8px", fontSize: 16 }}>\U0001F69A</span>
-                    <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
-                  </div>
-                  <div style={{ flex: 3, textAlign: "right" }}>
-                    <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>Para</div>
-                    <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{destination}</div>
-                  </div>
-                </div>
+        {/* --- Scrollable Content View --- */}
+        <div className="discreet-scroll" style={styles.scrollView}>
+          <div style={styles.content}>
+            {/* --- Modal Header (Status and ID) --- */}
+            <div style={styles.header}>
+              <div style={{ ...styles.statusBadge, backgroundColor: statusColor + '20' }}>
+                <span style={{ ...styles.statusText, color: statusColor }}>{statusText}</span>
               </div>
-            );
-          })()}
+              <span style={styles.idText}>#{displayId}</span>
+            </div>
 
-          {/* --- Hero Section (Title & Subtitle) --- */}
-          {config?.card_layout && (headerValue || subHeaderValue) && (
-            <div style={styles.heroSection}>
+            {/* --- Trip Route Tracker (Custom Visual element) --- */}
+            {(() => {
+              const origin = get(data, "origin_city") || "Macae - RJ";
+              const destination = get(data, "destination_city") || "Santos - SP";
+              return (
+                <div style={{
+                  width: "100%",
+                  marginTop: 16,
+                  marginBottom: 16,
+                  boxSizing: "border-box",
+                  fontFamily: "sans-serif"
+                }}>
+                  <div style={{
+                    marginBottom: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 11,
+                    fontWeight: "700",
+                    color: "#9778ff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.8px"
+                  }}>
+                    Rota de Viagem
+                  </div>
+                  <div style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                  }}>
+                    <div style={{ flex: 3 }}>
+                      <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>De</div>
+                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>
+                    </div>
+                    <div style={{ flex: 4, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
+                      <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
+                      <span style={{ margin: "0 8px", fontSize: 16 }}>\U0001F69A</span>
+                      <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
+                    </div>
+                    <div style={{ flex: 3, textAlign: "right" }}>
+                      <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>Para</div>
+                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{destination}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* --- Hero Section (Title & Subtitle) --- */}
+            {config?.card_layout && (headerValue || subHeaderValue) && (
+              <div style={styles.heroSection}>
                 {headerValue && (
-                    <>
-                        {header.label && <div style={styles.heroLabel}>{header.label}</div>}
-                        <div style={styles.h1Default}>{headerValue}</div>
-                    </>
+                  <div style={styles.headerGroup}>
+                    {header.label && <div style={styles.heroLabel}>{header.label}</div>}
+                    <div style={styles.h1Default}>{headerValue}</div>
+                  </div>
                 )}
                 {subHeaderValue && (
-                    <>
-                        {sub_header.label && <div style={styles.heroLabel}>{sub_header.label}</div>}
-                        <div style={styles.h2Default}>{subHeaderValue}</div>
-                    </>
+                  <div style={styles.subHeaderGroup}>
+                    {sub_header.label && <div style={styles.heroLabel}>{sub_header.label}</div>}
+                    <div style={styles.h2Default}>{subHeaderValue}</div>
+                  </div>
                 )}
+              </div>
+            )}
+
+            {config?.card_layout && <div style={styles.dividerContainer} />}
+
+            {/* --- Details Section (Dynamic Layout Elements) --- */}
+            <div style={styles.detailsSection}>
+              {modalLayout.map((el, i) => {
+                if (el.element === "section") return <ModalSectionElement key={i} title={el.title} fields={el.fields} data={data} />;
+                if (el.element === "field") return <ModalFieldElement key={i} label={el.label} field={el.field} data={data} />;
+                if (el.element === "alert") return <ModalAlertElement key={i} color={el.color} icon={el.icon} title={el.title} field={el.field} useField={el.useField} message={el.message} data={data} />;
+                if (el.element === "qrcode") return <ModalQRCodeElement key={i} title={el.title} caption={el.caption} field={el.field} data={data} />;
+                return null;
+              })}
             </div>
-          )}
-
-          {config?.card_layout && <div style={styles.dividerContainer} />}
-
-          {/* --- Details Section (Dynamic Layout Elements) --- */}
-          <div style={styles.detailsSection}>
-            {modalLayout.map((el, i) => {
-              if (el.element === "section") return <ModalSectionElement key={i} title={el.title} fields={el.fields} data={data} />;
-              if (el.element === "field") return <ModalFieldElement key={i} label={el.label} field={el.field} data={data} />;
-              if (el.element === "alert") return <ModalAlertElement key={i} color={el.color} icon={el.icon} title={el.title} field={el.field} useField={el.useField} message={el.message} data={data} />;
-              if (el.element === "qrcode") return <ModalQRCodeElement key={i} title={el.title} caption={el.caption} field={el.field} data={data} />;
-              return null;
-            })}
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

@@ -37,7 +37,6 @@ export const DEFAULT_EXAMPLE = {
   ref: "AGEND-2024-1054",
   layout_ref: "LAYOUT_DESCARGA_GRAOS",
   user_tax_id: "12345678000195",
-  operation_type: "DESCARGA",
   status: "SCHEDULED",
   summary: "Descarga de 35 toneladas de soja a granel",
   vehicle_plate: "ABC1D23",

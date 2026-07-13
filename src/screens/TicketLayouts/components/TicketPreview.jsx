@@ -328,18 +328,18 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
         {/* Hero Section / renderCardHeader */}
         {apptCardLayout && (headerValue || subHeaderValue) && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", paddingVertical: "20px", paddingTop: "8px", backgroundColor: "#ffffff", gap: "2px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", paddingVertical: "20px", paddingTop: "8px", backgroundColor: "#ffffff", gap: "10px" }}>
             {headerValue && (
-              <>
+              <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
                 {header.label && <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>{header.label}</span>}
                 <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#0F172A", lineHeight: "1.25" }}>{headerValue}</h1>
-              </>
+              </div>
             )}
             {subHeaderValue && (
-              <>
+              <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
                 {sub_header.label && <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>{sub_header.label}</span>}
                 <h2 style={{ fontSize: "20px", fontWeight: "500", color: "#475569", lineHeight: "1.25" }}>{subHeaderValue}</h2>
-              </>
+              </div>
             )}
           </div>
         )}

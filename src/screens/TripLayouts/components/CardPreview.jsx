@@ -62,9 +62,9 @@ export function CardPreview({ data, config }) {
               {get(data, "origin_city") || data?.custom_data?.origin_city || "Origem"}
             </span>
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
-              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0 }} />
+              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0, margin: "0 6px" }} />
               <span style={{ margin: "0 4px", fontSize: 14 }}>🚚</span>
-              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0 }} />
+              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0, margin: "0 6px" }} />
             </div>
             <span style={{ maxWidth: "40%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "right" }}>
               {get(data, "destination_city") || data?.custom_data?.destination_city || "Destino"}

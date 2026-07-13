@@ -23,7 +23,9 @@ export function ModalPreview({ data, config }) {
     statusBadge: { paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6, borderRadius: 8 },
     statusText: { fontSize: 12, fontWeight: 700, textTransform: 'uppercase' },
     idText: { fontSize: 14, fontWeight: 500, color: '#94A3B8' },
-    heroSection: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: 24, paddingTop: 16, backgroundColor: 'white', gap: 2 },
+    heroSection: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: 24, paddingTop: 16, backgroundColor: 'white', gap: 10 },
+    headerGroup: { display: 'flex', flexDirection: 'column', alignSelf: 'stretch', gap: 0 },
+    subHeaderGroup: { display: 'flex', flexDirection: 'column', alignSelf: 'stretch', gap: 0 },
     heroLabel: { fontSize: 16, color: '#94A3B8', width: 110, fontWeight: 500 },
     h1Default: { fontSize: 26, fontWeight: 800, color: '#0F172A' },
     h2Default: { fontSize: 20, fontWeight: 500, color: '#475569' },
@@ -43,66 +45,66 @@ export function ModalPreview({ data, config }) {
 
   return (
     <>
-    <style>{`
+      <style>{`
       .discreet-scroll::-webkit-scrollbar { width: 4px; }
       .discreet-scroll::-webkit-scrollbar-track { background: transparent; }
       .discreet-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     `}</style>
-    <div style={styles.container}>
-      {/* --- Modal Handle Area --- */}
-      <div style={styles.handleArea}>
-        <div style={styles.handleContainer}>
-          <div style={styles.handle} />
-        </div>
-        <div style={styles.displayTime}>
-          {displayTime}
-        </div>
-      </div>
-
-      {/* --- Scrollable Content View --- */}
-      <div className="discreet-scroll" style={styles.scrollView}>
-        <div style={styles.content}>
-          {/* --- Modal Header (Status and ID) --- */}
-          <div style={styles.header}>
-            <div style={{ ...styles.statusBadge, backgroundColor: statusColor + '20' }}>
-              <span style={{ ...styles.statusText, color: statusColor }}>{statusText}</span>
-            </div>
-            <span style={styles.idText}>#{displayId}</span>
+      <div style={styles.container}>
+        {/* --- Modal Handle Area --- */}
+        <div style={styles.handleArea}>
+          <div style={styles.handleContainer}>
+            <div style={styles.handle} />
           </div>
+          <div style={styles.displayTime}>
+            {displayTime}
+          </div>
+        </div>
 
-          {/* --- Hero Section (Title & Subtitle) --- */}
-          {config?.card_layout && (headerValue || subHeaderValue) && (
-            <div style={styles.heroSection}>
+        {/* --- Scrollable Content View --- */}
+        <div className="discreet-scroll" style={styles.scrollView}>
+          <div style={styles.content}>
+            {/* --- Modal Header (Status and ID) --- */}
+            <div style={styles.header}>
+              <div style={{ ...styles.statusBadge, backgroundColor: statusColor + '20' }}>
+                <span style={{ ...styles.statusText, color: statusColor }}>{statusText}</span>
+              </div>
+              <span style={styles.idText}>#{displayId}</span>
+            </div>
+
+            {/* --- Hero Section (Title & Subtitle) --- */}
+            {config?.card_layout && (headerValue || subHeaderValue) && (
+              <div style={styles.heroSection}>
                 {headerValue && (
-                    <>
-                        {header.label && <div style={styles.heroLabel}>{header.label}</div>}
-                        <div style={styles.h1Default}>{headerValue}</div>
-                    </>
+                  <div style={styles.headerGroup}>
+                    {header.label && <div style={styles.heroLabel}>{header.label}</div>}
+                    <div style={styles.h1Default}>{headerValue}</div>
+                  </div>
                 )}
                 {subHeaderValue && (
-                    <>
-                        {sub_header.label && <div style={styles.heroLabel}>{sub_header.label}</div>}
-                        <div style={styles.h2Default}>{subHeaderValue}</div>
-                    </>
+                  <div style={styles.subHeaderGroup}>
+                    {sub_header.label && <div style={styles.heroLabel}>{sub_header.label}</div>}
+                    <div style={styles.h2Default}>{subHeaderValue}</div>
+                  </div>
                 )}
+              </div>
+            )}
+
+            {config?.card_layout && <div style={styles.dividerContainer} />}
+
+            {/* --- Details Section (Dynamic Layout Elements) --- */}
+            <div style={styles.detailsSection}>
+              {modalLayout.map((el, i) => {
+                if (el.element === "section") return <ModalSectionElement key={i} title={el.title} fields={el.fields} data={data} />;
+                if (el.element === "field") return <ModalFieldElement key={i} label={el.label} field={el.field} data={data} />;
+                if (el.element === "alert") return <ModalAlertElement key={i} color={el.color} icon={el.icon} title={el.title} field={el.field} useField={el.useField} message={el.message} data={data} />;
+                if (el.element === "qrcode") return <ModalQRCodeElement key={i} title={el.title} caption={el.caption} field={el.field} data={data} />;
+                return null;
+              })}
             </div>
-          )}
-
-          {config?.card_layout && <div style={styles.dividerContainer} />}
-
-          {/* --- Details Section (Dynamic Layout Elements) --- */}
-          <div style={styles.detailsSection}>
-            {modalLayout.map((el, i) => {
-              if (el.element === "section") return <ModalSectionElement key={i} title={el.title} fields={el.fields} data={data} />;
-              if (el.element === "field") return <ModalFieldElement key={i} label={el.label} field={el.field} data={data} />;
-              if (el.element === "alert") return <ModalAlertElement key={i} color={el.color} icon={el.icon} title={el.title} field={el.field} useField={el.useField} message={el.message} data={data} />;
-              if (el.element === "qrcode") return <ModalQRCodeElement key={i} title={el.title} caption={el.caption} field={el.field} data={data} />;
-              return null;
-            })}
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
