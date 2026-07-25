@@ -62,7 +62,7 @@ export function defaultState() {
   return {
     card_layout: {
       header: { label: "Motorista", field: "nome_motorista" },
-      sub_header: { label: "Placa", field: "vehicle_plate" },
+      sub_header: { label: "Placa", field: "license_plate" },
       body_rows: [
         { id: uid(), label: "Transportadora", field: "transportadora" },
       ],

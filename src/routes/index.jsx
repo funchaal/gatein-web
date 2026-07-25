@@ -7,11 +7,13 @@ import Geofence from '../screens/Geofence/Geofence';
 import CompanyInfo from '../screens/CompanyInfo/CompanyInfo';
 import Users from '../screens/admin/Users/Users';
 import ApiKey from '../screens/admin/ApiKey/ApiKey';
+import StagingPassword from '../screens/admin/StagingPassword/StagingPassword';
 import CompanyServices from '../screens/CompanyServices/CompanyServices';
 import Announcements from '../screens/Announcements/Announcements';
 import ProtectedRoute from '../components/ProtectedRoute';
 import NotFound from '../screens/NotFound/NotFound';
 import Layout from '../components/Layout';
+
 
 const routes = createBrowserRouter([
     {
@@ -53,6 +55,10 @@ const routes = createBrowserRouter([
             {
                 path: 'api-keys',
                 element: <ApiKey />,
+            },
+            {
+                path: 'staging-password',
+                element: <StagingPassword />,
             },
         ],
     },

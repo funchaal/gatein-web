@@ -16,6 +16,7 @@ import {
   Moon,
   Bell,
   Ticket,
+  FlaskConical,
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -119,6 +120,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
             </div>
             <SidebarItem icon={Plus} label="Usuários" to="/users" active={activeTab === '/users'} />
             <SidebarItem icon={Package} label="API Keys" to="/api-keys" active={activeTab === '/api-keys'} />
+            <SidebarItem icon={FlaskConical} label="Senha de Homologação" to="/staging-password" active={activeTab === '/staging-password'} />
           </>
         )}
       </nav>

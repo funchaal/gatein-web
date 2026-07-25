@@ -69,7 +69,7 @@ export function defaultState() {
         { id: uid(), value: "COMPLETED", color: "green", isNew: true }
       ],
       body_rows: [
-        { id: uid(), label: "Placa", field: "vehicle_plate" },
+        { id: uid(), label: "Placa", field: "license_plate" },
         { id: uid(), label: "Origem", field: "origin_city" },
         { id: uid(), label: "Destino", field: "destination_city" },
       ],
@@ -81,7 +81,7 @@ export function defaultState() {
         title: "Detalhes da Viagem",
         fields: [
           { id: uid(), label: "Resumo", field: "summary" },
-          { id: uid(), label: "Placa", field: "vehicle_plate" },
+          { id: uid(), label: "Placa", field: "license_plate" },
           { id: uid(), label: "Origem", field: "origin_city" },
           { id: uid(), label: "Destino", field: "destination_city" }
         ]

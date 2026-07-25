@@ -80,6 +80,30 @@ export const api = createApi({
       }),
     }),
 
+    // --- STAGING: Senha Mestra de Homologação ---
+
+    /**
+     * Gera (ou regenera) a senha mestra de staging para a empresa do usuário logado.
+     * Retorna a senha em texto plano APENAS nesta resposta.
+     * Disponível somente quando PROD=False no servidor.
+     */
+    generateStagingPassword: builder.mutation({
+      query: () => ({
+        url: '/auth/staging/password/generate',
+        method: 'POST',
+      }),
+    }),
+
+    /**
+     * Verifica se a empresa já possui uma senha mestra de staging ativa.
+     * Não retorna a senha — apenas status e datas.
+     */
+    getStagingPasswordStatus: builder.query({
+      query: () => '/auth/staging/password/status',
+      transformResponse: (res) => res.data,
+    }),
+
+
     // --- API KEYS ---
     generateApiKey: builder.mutation({
       query: () => ({ url: '/api-key/generate', method: 'POST' }),
@@ -257,7 +281,11 @@ export const {
   useLoginMutation,
   useRestoreSessionMutation,
   useDevResetPasswordMutation,
+  // --- STAGING ---
+  useGenerateStagingPasswordMutation,
+  useGetStagingPasswordStatusQuery,
   useGenerateApiKeyMutation,
+
   useValidateApiKeyQuery,
   useGetGeofenceQuery,
   useUpdateGeofenceMutation,

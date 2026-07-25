@@ -172,7 +172,7 @@ export default function TicketLayouts() {
       body_rows: [
         { field: "gate_assignment", label: "Gate" }
       ],
-      sub_header: { label: "Veículo", field: "vehicle_plate", preview_value: get(exampleData, "vehicle_plate") || "ABC-1234" },
+      sub_header: { label: "Veículo", field: "license_plate", preview_value: get(exampleData, "license_plate") || "ABC-1234" },
       status_tags: [
         { color: "blue", value: "SCHEDULED" }
       ]
@@ -347,7 +347,7 @@ export default function TicketLayouts() {
         }
       ],
       sub_header: {
-        field: "vehicle_plate",
+        field: "license_plate",
         label: "Veículo",
         preview_value: "ABC-1234"
       },

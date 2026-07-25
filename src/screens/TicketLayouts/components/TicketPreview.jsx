@@ -25,8 +25,8 @@ function TicketIcon({ name, className, size = 16, style }) {
 
 export default function TicketPreview({ data, config, apptCardLayout }) {
   const displayId = data?.ref || "—";
-  const displayTime = data?.schedule_start_time || data?.created_at
-    ? formatDate(data?.schedule_start_time || data?.created_at, true)
+  const displayTime = data?.window_start || data?.created_at
+    ? formatDate(data?.window_start || data?.created_at, true)
     : "25 de junho de 2026 16:30";
 
   const displayCreatedAt = data?.created_at

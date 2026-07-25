@@ -42,6 +42,7 @@ export default function Announcements() {
     description: '',
     image_url: '',
     image_position: { x: 50, y: 50 },
+    url: '',
     is_active: true,
     start_at: '',
     end_at: '',
@@ -56,6 +57,7 @@ export default function Announcements() {
       description: '',
       image_url: '',
       image_position: { x: 50, y: 50 },
+      url: '',
       is_active: true,
       start_at: '',
       end_at: '',
@@ -75,6 +77,7 @@ export default function Announcements() {
         description: announcement.description ?? '',
         image_url: announcement.image_url ?? '',
         image_position: announcement.image_position ?? { x: 50, y: 50 },
+        url: announcement.url ?? '',
         is_active: announcement.is_active ?? true,
         start_at: startLocal,
         end_at: endLocal,
@@ -123,17 +126,24 @@ export default function Announcements() {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     
-    if (!formData.title.trim()) {
-      toast.error('O título é obrigatório.');
-      return;
+    let generatedTitle = formData.title;
+    if (!generatedTitle || !generatedTitle.trim()) {
+      if (formData.image_url) {
+        const urlParts = formData.image_url.split('/');
+        const filename = urlParts[urlParts.length - 1].split('?')[0].substring(0, 30);
+        generatedTitle = `Aviso (${filename})`;
+      } else {
+        generatedTitle = `Aviso`;
+      }
     }
 
     const payload = {
-      title: formData.title,
-      subtitle: formData.subtitle || null,
-      description: formData.description || null,
+      title: generatedTitle,
+      subtitle: null,
+      description: null,
       image_url: formData.image_url || null,
       image_position: formData.image_position,
+      url: formData.url || null,
       start_at: formData.start_at ? new Date(formData.start_at).toISOString() : null,
       end_at: formData.end_at ? new Date(formData.end_at).toISOString() : null,
     };
@@ -257,7 +267,7 @@ export default function Announcements() {
                 <table className="w-full text-sm text-left">
                   <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
                     <tr>
-                      <th className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 px-6 py-3">Aviso (18:9 Preview)</th>
+                      <th className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 px-6 py-3">Aviso (14:9 Preview)</th>
                       <th className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 px-6 py-3">Início</th>
                       <th className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 px-6 py-3">Fim</th>
                       <th className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 px-6 py-3">Ativo</th>
@@ -271,7 +281,7 @@ export default function Announcements() {
                           <div className="flex gap-4 items-center">
                             <div 
                               className="w-24 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden relative border border-gray-200 dark:border-gray-800 flex-shrink-0"
-                              style={{ aspectRatio: '18 / 9' }}
+                              style={{ aspectRatio: '14 / 9' }}
                             >
                               {item.image_url ? (
                                 <img
@@ -378,49 +388,9 @@ export default function Announcements() {
           <Card className="bg-white dark:bg-card border border-gray-200 dark:border-gray-800 shadow-sm">
             <CardHeader className="border-b border-gray-100 dark:border-gray-800">
               <CardTitle className="text-base font-semibold">Configuração do Conteúdo</CardTitle>
-              <CardDescription>Defina o título, descrição, imagem de destaque e o status.</CardDescription>
+              <CardDescription>Defina a imagem de destaque, cronograma e o status.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-6">
-              <div className="space-y-1">
-                <Label htmlFor="title" className="text-sm font-semibold">Título *</Label>
-                <Input
-                  id="title"
-                  required
-                  maxLength={100}
-                  placeholder="Ex: Novo fluxo de triagem"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212]"
-                />
-                <div className="text-[10px] text-right text-gray-400">{formData.title.length}/100</div>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="subtitle" className="text-sm font-semibold">Subtítulo</Label>
-                <Input
-                  id="subtitle"
-                  maxLength={150}
-                  placeholder="Ex: Válido a partir de 15/07"
-                  value={formData.subtitle}
-                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                  className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212]"
-                />
-                <div className="text-[10px] text-right text-gray-400">{formData.subtitle.length}/150</div>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="description" className="text-sm font-semibold">Descrição (Máximo 250 caracteres)</Label>
-                <textarea
-                  id="description"
-                  maxLength={250}
-                  rows={4}
-                  className="w-full flex min-h-[90px] rounded-md border border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212] px-3 py-2 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-gray-200"
-                  placeholder="Ex: Motoristas de carretas devem utilizar a faixa da esquerda..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-                <div className="text-[10px] text-right text-gray-400">{formData.description.length}/250</div>
-              </div>
 
               <div className="space-y-1">
                 <Label htmlFor="image_url" className="text-sm font-semibold">URL da Imagem</Label>
@@ -429,6 +399,17 @@ export default function Announcements() {
                   placeholder="Insira o link da imagem (ex: Unsplash, CDN...)"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="url" className="text-sm font-semibold">URL do Aviso (Opcional)</Label>
+                <Input
+                  id="url"
+                  placeholder="Insira um link para redirecionamento (ex: site, regulamento...)"
+                  value={formData.url || ''}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                   className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212]"
                 />
               </div>
@@ -484,7 +465,7 @@ export default function Announcements() {
             <CardHeader className="border-b border-gray-100 dark:border-gray-800">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-orange-500" />
-                Visualização no Aplicativo (18:9)
+                Visualização no Aplicativo (14:9)
               </CardTitle>
               <CardDescription>Veja em tempo real como o banner será exibido no celular do motorista.</CardDescription>
             </CardHeader>
@@ -494,7 +475,7 @@ export default function Announcements() {
                 ref={previewContainerRef}
                 onMouseDown={handleDragStart}
                 className="relative w-full overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-800 select-none shadow-lg cursor-move"
-                style={{ aspectRatio: '18 / 9' }}
+                style={{ aspectRatio: '14 / 9' }}
                 title={formData.image_url ? 'Clique e arraste verticalmente para reposicionar a imagem' : ''}
               >
                 {formData.image_url ? (
@@ -521,29 +502,17 @@ export default function Announcements() {
                   </div>
                 )}
 
-                {/* Elegant dark gradient overlay for text legibility */}
-                <div 
-                  className="absolute inset-0 pointer-events-none" 
-                  style={{
-                    background: 'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.45) 45%, transparent 100%)'
-                  }}
-                />
-
-                {/* Text Content Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white pointer-events-none">
-                  <h4 className="text-[15px] font-extrabold truncate tracking-tight">
-                    {formData.title || 'Título do Aviso'}
-                  </h4>
-                  {formData.subtitle ? (
-                    <p className="text-[11px] font-semibold opacity-90 truncate mt-0.5">
-                      {formData.subtitle}
-                    </p>
-                  ) : null}
-                  {formData.description ? (
-                    <p className="text-[9px] opacity-75 mt-1.5 leading-normal line-clamp-2">
-                      {formData.description}
-                    </p>
-                  ) : null}
+                {/* White progress bar preview split into 3 parts */}
+                <div className="absolute bottom-2 left-3 right-3 flex justify-between gap-1.5 h-[3px] pointer-events-none">
+                  <div className="flex-1 bg-white/40 rounded-sm overflow-hidden h-full">
+                    <div className="bg-white h-full w-full" />
+                  </div>
+                  <div className="flex-1 bg-white/40 rounded-sm overflow-hidden h-full">
+                    <div className="bg-white h-full w-[60%] animate-pulse" />
+                  </div>
+                  <div className="flex-1 bg-white/40 rounded-sm overflow-hidden h-full">
+                    <div className="bg-white h-full w-0" />
+                  </div>
                 </div>
               </div>
 

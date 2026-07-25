@@ -35,7 +35,7 @@ export function ModalPreview({ data, config }) {
 
   const statusText = data?.status || "Desconhecido";
   const statusColor = resolveStatusColor(statusText, config?.card_layout?.status_tags);
-  const displayTime = formatDateExtended(get(data, "schedule.start_time") || data?.schedule_start_time) || "quarta-feira, 13 de maio às 14:30";
+  const displayTime = formatDateExtended(get(data, "schedule.start_time") || data?.window_start) || "quarta-feira, 13 de maio às 14:30";
   const displayId = data?.ref || "";
   const { header, sub_header } = config?.card_layout || {};
   const modalLayout = config?.modal_layout || [];

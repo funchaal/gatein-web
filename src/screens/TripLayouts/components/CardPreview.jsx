@@ -28,7 +28,7 @@ export function CardPreview({ data, config }) {
 
   const status = data?.status || "Desconhecido";
   const statusColor = resolveStatusColor(status, config?.card_layout?.status_tags);
-  const displayTime = formatDate(get(data, "schedule.start_time") || data?.schedule_start_time);
+  const displayTime = formatDate(get(data, "schedule.start_time") || data?.window_start);
   const displayId = data?.ref;
 
   const { header, sub_header, body_rows } = config?.card_layout || {};
