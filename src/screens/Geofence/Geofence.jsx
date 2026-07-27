@@ -18,6 +18,7 @@ import { ContainerHeader } from '@/components/ui/ContainerHeader';
 import GeofenceCoordinatesCard from './components/GeofenceCoordinatesCard';
 import GeofenceRadiusCard from './components/GeofenceRadiusCard';
 import GeofenceMapCard from './components/GeofenceMapCard';
+import GeofenceCheckinCard from './components/GeofenceCheckinCard';
 
 export default function Geofence() {
   const { can } = usePermissions();
@@ -30,6 +31,7 @@ export default function Geofence() {
   const [config, setConfig] = useState({
     center: DEFAULT_CENTER,
     radius: DEFAULT_RADIUS,
+    use_remote_checkin: false,
   });
 
   const [originalConfig, setOriginalConfig] = useState(null);
@@ -38,7 +40,7 @@ export default function Geofence() {
   useEffect(() => {
     if (!data) return;
 
-    const { geofence, address } = data;
+    const { geofence, address, use_remote_checkin } = data;
 
     const initialConfig = {
       center: {
@@ -46,6 +48,7 @@ export default function Geofence() {
         lng: geofence?.center?.lng ?? address?.lng ?? DEFAULT_CENTER.lng,
       },
       radius: geofence?.radius ?? DEFAULT_RADIUS,
+      use_remote_checkin: use_remote_checkin ?? false,
     };
     setConfig(initialConfig);
     setOriginalConfig(initialConfig);
@@ -56,7 +59,8 @@ export default function Geofence() {
     return (
       config.center.lat !== originalConfig.center.lat ||
       config.center.lng !== originalConfig.center.lng ||
-      config.radius !== originalConfig.radius
+      config.radius !== originalConfig.radius ||
+      config.use_remote_checkin !== originalConfig.use_remote_checkin
     );
   }, [config, originalConfig]);
 
@@ -74,6 +78,7 @@ export default function Geofence() {
     try {
       await updateGeofence({
         geofence: { center: config.center, radius: config.radius },
+        use_remote_checkin: config.use_remote_checkin,
       }).unwrap();
       setOriginalConfig(config); // Update original config after save
       toast.success('Geofence salva com sucesso!');
@@ -108,16 +113,41 @@ export default function Geofence() {
 
   // ---------- Render ----------
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="space-y-4 relative pb-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ backgroundColor: colors.primary + '1A' }}>
-          <MapPin className="w-5 h-5" style={{ color: colors.primary }} />
+      <div className="sticky -top-6 z-20 bg-background/80 backdrop-blur-md -mx-6 px-6 -mt-6 pt-6 pb-4 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: colors.primary + '1A' }}>
+            <MapPin className="w-5 h-5" style={{ color: colors.primary }} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Configuração de Geofence</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Defina o perímetro de validação para check-in automático</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Configuração de Geofence</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Defina o perímetro de validação para check-in automático</p>
-        </div>
+
+        {canWrite && (
+          <div className="flex-shrink-0">
+            <ActionButton
+              onClick={handleSave}
+              isLoading={isSaving}
+              disabled={!canSave}
+              className={`h-9 ${!canSave ? "bg-gray-300 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-default border-gray-300 dark:border-gray-700" : ""}`}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="w-3.5 h-3.5 mr-2" />
+                  Salvar Alterações
+                </>
+              )}
+            </ActionButton>
+          </div>
+        )}
       </div>
 
       {/* Banner somente leitura */}
@@ -133,6 +163,13 @@ export default function Geofence() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Painel de Controles */}
         <div className="space-y-6">
+          {/* Check-in Remoto */}
+          <GeofenceCheckinCard
+            useRemoteCheckin={config.use_remote_checkin}
+            setUseRemoteCheckin={(val) => setConfig((prev) => ({ ...prev, use_remote_checkin: val }))}
+            canWrite={canWrite}
+          />
+
           {/* Coordenadas */}
           <GeofenceCoordinatesCard
             config={config}
@@ -148,32 +185,6 @@ export default function Geofence() {
             radiusInKm={radiusInKm}
             areaInKm2={areaInKm2}
           />
-
-          {/* Salvar — só exibe se tiver permissão */}
-          {canWrite && (
-            <Card className="border-gray-200 dark:border-0 shadow-none">
-              <CardContent className="p-4">
-                <ActionButton
-                  onClick={handleSave}
-                  isLoading={isSaving}
-                  disabled={!canSave}
-                  className={`w-full ${!canSave ? "bg-gray-300 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-default border-gray-300 dark:border-gray-700" : ""}`}
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Salvando...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Salvar Configurações
-                    </>
-                  )}
-                </ActionButton>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Mapa */}

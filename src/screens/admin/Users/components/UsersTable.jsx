@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { User, Edit2, Trash2, Search, AlertCircle, Shield } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,8 @@ export default function UsersTable({
   filtered, isLoading, isError, searchTerm, setSearchTerm,
   modules, handleOpenModal, handleDelete
 }) {
+  const currentUser = useSelector((state) => state.auth.user);
+
   return (
     <Card className="border-gray-200 dark:border-0 shadow-none overflow-hidden">
       <CardHeader className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-transparent">
@@ -55,74 +58,94 @@ export default function UsersTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {filtered.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                          {user.name?.charAt(0).toUpperCase()}
-                        </div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{user.username}</td>
-                    <td className="px-6 py-4">
-                      {user.is_admin ? (
-                        <span className="inline-flex items-center justify-center h-6 gap-1.5 px-2.5 text-xs font-semibold bg-purple-100/70 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full">
-                          <Shield className="w-3.5 h-3.5" /> Admin
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center justify-center h-6 px-2.5 text-xs font-semibold bg-gray-100/70 dark:bg-gray-800/45 text-gray-700 dark:text-gray-300 rounded-full">
-                          Usuário
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1.5 items-center">
-                        {/* Mostra só os módulos relevantes pro tipo de empresa */}
-                        {modules.slice(0, 3).map(({ key, label }) => {
-                          const val = user.permissions?.[key] ?? 'none';
-                          if (val === 'none') return null;
-                          return (
-                            <div
-                              key={key}
-                              className="inline-flex items-center h-6 gap-1.5 bg-gray-100/60 dark:bg-[#1A1A1C] rounded-full pl-2.5 pr-1 text-xs"
-                            >
-                              <span className="font-medium text-gray-600 dark:text-gray-400 text-[11px] leading-none">
-                                {label}
+                {filtered.map((user) => {
+                  const isSelf = currentUser && (
+                    (user.id && currentUser.id && String(user.id) === String(currentUser.id)) ||
+                    (user.username && currentUser.username && user.username === currentUser.username)
+                  );
+
+                  return (
+                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                            {user.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+                            {isSelf && (
+                              <span className="px-2 py-0.5 text-[11px] font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-800/60">
+                                Você mesmo
                               </span>
-                              <span className="w-[3px] h-[3px] bg-gray-300 dark:bg-gray-700 rounded-full" />
-                              <PermissionBadge value={val} />
-                            </div>
-                          );
-                        })}
-                        {user.is_admin && (
-                          <span className="h-6 px-2.5 text-[10px] font-semibold bg-purple-100/70 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full uppercase tracking-wider inline-flex items-center justify-center gap-1">
-                            <Shield className="w-3 h-3" /> Acesso total
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{user.username}</td>
+                      <td className="px-6 py-4">
+                        {user.is_admin ? (
+                          <span className="inline-flex items-center justify-center h-6 gap-1.5 px-2.5 text-xs font-semibold bg-purple-100/70 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full">
+                            <Shield className="w-3.5 h-3.5" /> Admin
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center justify-center h-6 px-2.5 text-xs font-semibold bg-gray-100/70 dark:bg-gray-800/45 text-gray-700 dark:text-gray-300 rounded-full">
+                            Usuário
                           </span>
                         )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenModal(user)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
-                          title="Editar"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors"
-                          title="Excluir"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          {/* Mostra só os módulos relevantes pro tipo de empresa */}
+                          {modules.slice(0, 3).map(({ key, label }) => {
+                            const val = user.permissions?.[key] ?? 'none';
+                            if (val === 'none') return null;
+                            return (
+                              <div
+                                key={key}
+                                className="inline-flex items-center h-6 gap-1.5 bg-gray-100/60 dark:bg-[#1A1A1C] rounded-full pl-2.5 pr-1 text-xs"
+                              >
+                                <span className="font-medium text-gray-600 dark:text-gray-400 text-[11px] leading-none">
+                                  {label}
+                                </span>
+                                <span className="w-[3px] h-[3px] bg-gray-300 dark:bg-gray-700 rounded-full" />
+                                <PermissionBadge value={val} />
+                              </div>
+                            );
+                          })}
+                          {user.is_admin && (
+                            <span className="h-6 px-2.5 text-[10px] font-semibold bg-purple-100/70 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full uppercase tracking-wider inline-flex items-center justify-center gap-1">
+                              <Shield className="w-3 h-3" /> Acesso total
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          {isSelf ? (
+                            <span className="text-xs text-gray-400 dark:text-gray-500 italic pr-2">Sua conta</span>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleOpenModal(user)}
+                                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
+                                title="Editar"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(user.id)}
+                                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors"
+                                title="Excluir"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

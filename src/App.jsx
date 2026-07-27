@@ -13,7 +13,7 @@ function App() {
 
   useEffect(() => {
     // Apply persisted theme immediately to prevent flash of wrong theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     dispatch(setTheme(savedTheme));
     
     restoreSession();

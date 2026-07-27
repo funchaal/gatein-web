@@ -12,10 +12,17 @@ export default function GeofenceMapCard({ config, handleMapClick, canWrite }) {
         description={canWrite ? 'Clique no mapa para ajustar a localização central' : 'Visualização somente leitura'}
         themeColor="blue"
         action={
-          <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 px-3 py-1.5 rounded-lg border border-green-200 dark:border-green-800">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-xs font-medium text-green-700 dark:text-green-400">Ativo</span>
-          </div>
+          config?.use_remote_checkin ? (
+            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 px-3 py-1.5 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-xs font-semibold text-green-700 dark:text-green-400">Ativo</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full" />
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Inativo</span>
+            </div>
+          )
         }
       />
       <CardContent className="p-0 flex-1">

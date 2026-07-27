@@ -6,7 +6,7 @@ import LoadingState from '@/components/LoadingState';
 
 export default function CompanyServicesTable({
   filtered, isLoading, isError, searchTerm, setSearchTerm,
-  handleToggleStatus, handleOpenModal, handleDelete
+  handleToggleStatus, handleOpenModal, handleOpenEditor, handleDelete
 }) {
   return (
     <Card className="border-gray-200 dark:border-0 shadow-none overflow-hidden">
@@ -107,18 +107,11 @@ export default function CompanyServicesTable({
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleOpenModal(service)}
+                          onClick={() => (handleOpenEditor || handleOpenModal)(service)}
                           className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
                           title="Editar"
                         >
                           <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(service.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors"
-                          title="Excluir"
-                        >
-                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

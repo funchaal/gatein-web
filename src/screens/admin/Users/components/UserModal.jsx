@@ -1,4 +1,5 @@
-import { User, Mail, Lock, UserPlus, Edit2, X, Loader2 } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, Edit2, Trash2, X, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,12 +16,38 @@ export default function UserModal({
   permissions,
   setPermissions,
   modules,
+  allUsers = [],
   handleCloseModal,
   handleSubmit,
+  handleDelete,
+  usernameError,
+  setUsernameError,
   isSaving,
   canSave
 }) {
+  const currentUser = useSelector((state) => state.auth.user);
+
   if (!isModalOpen) return null;
+
+  const trimmedUsername = formData.username?.trim().toLowerCase() || '';
+  const isEditingSameUsername = editingUser && editingUser.username?.toLowerCase() === trimmedUsername;
+  
+  const isUsernameTakenInList = Boolean(
+    trimmedUsername &&
+    allUsers.some(
+      (u) =>
+        u.username?.toLowerCase() === trimmedUsername &&
+        (!editingUser || String(u.id) !== String(editingUser.id))
+    )
+  );
+
+  const isUsernameTaken = isUsernameTakenInList || Boolean(usernameError);
+  const isSaveDisabled = !canSave || isUsernameTaken;
+
+  const isSelf = currentUser && editingUser && (
+    (editingUser.id && currentUser.id && String(editingUser.id) === String(currentUser.id)) ||
+    (editingUser.username && currentUser.username && editingUser.username === currentUser.username)
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -78,12 +105,34 @@ export default function UserModal({
                   <Input
                     id="username" name="username" type="text"
                     value={formData.username}
-                    onChange={(e) => setFormData((p) => ({ ...p, username: e.target.value }))}
+                    onChange={(e) => {
+                      setFormData((p) => ({ ...p, username: e.target.value }));
+                      if (setUsernameError) setUsernameError('');
+                    }}
                     placeholder="user@example.com"
-                    className="pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                    className={`pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500 ${isUsernameTaken ? 'border-red-500 focus:border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {trimmedUsername && (
+                  <div className="mt-1 flex items-center">
+                    {isUsernameTaken ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-800/60">
+                        <AlertCircle className="w-3 h-3" />
+                        {usernameError || 'Nome de usuário já existe'}
+                      </span>
+                    ) : isEditingSameUsername ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+                        Nome de usuário atual
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Nome de usuário disponível
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -151,27 +200,45 @@ export default function UserModal({
           )}
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
-            <Button type="button" onClick={handleCloseModal} variant="outline" className="border-gray-300 dark:border-gray-700">
-              Cancelar
-            </Button>
-            <ActionButton
-              type="submit"
-              isLoading={isSaving}
-              disabled={!canSave}
-              className={`min-w-[140px] ${!canSave ? "bg-gray-300 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-default border-gray-300 dark:border-gray-700" : ""}`}
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  Salvando...
-                </>
-              ) : editingUser ? (
-                <><Edit2 className="w-4 h-4 mr-2" /> Atualizar</>
-              ) : (
-                <><UserPlus className="w-4 h-4 mr-2" /> Criar Usuário</>
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div>
+              {editingUser && !isSelf && handleDelete && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => {
+                    handleDelete(editingUser.id);
+                    handleCloseModal();
+                  }}
+                  disabled={isSaving}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Excluir Usuário
+                </Button>
               )}
-            </ActionButton>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button type="button" onClick={handleCloseModal} variant="outline" className="border-gray-300 dark:border-gray-700">
+                Cancelar
+              </Button>
+              <ActionButton
+                type="submit"
+                isLoading={isSaving}
+                disabled={isSaveDisabled}
+                className={`min-w-[140px] ${isSaveDisabled ? "bg-gray-300 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-default border-gray-300 dark:border-gray-700" : ""}`}
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Salvando...
+                  </>
+                ) : editingUser ? (
+                  <><Edit2 className="w-4 h-4 mr-2" /> Atualizar</>
+                ) : (
+                  <><UserPlus className="w-4 h-4 mr-2" /> Criar Usuário</>
+                )}
+              </ActionButton>
+            </div>
           </div>
         </form>
       </div>

@@ -59,10 +59,13 @@ export default function Users() {
   const canSave = hasChanges && isValid;
 
   // --- Form helpers ---
+  const [usernameError, setUsernameError] = useState('');
+
   const resetForm = () => {
     setFormData({ name: '', username: '', password: '', is_admin: false });
     setPermissions(buildDefaultPermissions(modules));
     setEditingUser(null);
+    setUsernameError('');
   };
 
   const handleOpenModal = (user = null) => {
@@ -74,12 +77,11 @@ export default function Users() {
         password: '',
         is_admin: user.is_admin ?? false,
       });
-      // Garante que todos os módulos atuais aparecem no form, mesmo que o
-      // usuário salvo não tenha o módulo (ex: empresa mudou de tipo)
       setPermissions({ ...buildDefaultPermissions(modules), ...(user.permissions ?? {}) });
     } else {
       resetForm();
     }
+    setUsernameError('');
     setIsModalOpen(true);
   };
 
@@ -88,8 +90,8 @@ export default function Users() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSave) return;
+    setUsernameError('');
     const payload = { ...formData, permissions };
-    // Remove senha vazia no update (backend ignora se ausente)
     if (editingUser && !payload.password) delete payload.password;
 
     try {
@@ -102,8 +104,12 @@ export default function Users() {
       }
       handleCloseModal();
     } catch (err) {
-      const msg = err?.data?.detail?.message ?? 'Erro ao salvar usuário.';
-      toast.error(msg);
+      if (err?.data?.detail?.code === 'USERNAME_EXISTS' || err?.status === 409) {
+        setUsernameError(err?.data?.detail?.message || 'Este nome de usuário já está em uso.');
+      } else {
+        const msg = err?.data?.detail?.message ?? 'Erro ao salvar usuário.';
+        toast.error(msg);
+      }
     }
   };
 
@@ -168,8 +174,12 @@ export default function Users() {
         permissions={permissions}
         setPermissions={setPermissions}
         modules={modules}
+        allUsers={users}
         handleCloseModal={handleCloseModal}
         handleSubmit={handleSubmit}
+        handleDelete={handleDelete}
+        usernameError={usernameError}
+        setUsernameError={setUsernameError}
         isSaving={isSaving}
         canSave={canSave}
       />

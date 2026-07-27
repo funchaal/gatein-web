@@ -105,8 +105,31 @@ export const api = createApi({
 
 
     // --- API KEYS ---
+    getApiKeys: builder.query({
+      query: () => '/api-key/list',
+      transformResponse: (res) => res.data,
+      providesTags: ['ApiKey'],
+    }),
+
     generateApiKey: builder.mutation({
       query: () => ({ url: '/api-key/generate', method: 'POST' }),
+      invalidatesTags: ['ApiKey'],
+    }),
+
+    regenerateApiKey: builder.mutation({
+      query: (prefix) => ({
+        url: '/api-key/regenerate',
+        method: 'POST',
+        body: { prefix },
+      }),
+      invalidatesTags: ['ApiKey'],
+    }),
+
+    deleteApiKey: builder.mutation({
+      query: (prefix) => ({
+        url: `/api-key/${encodeURIComponent(prefix)}`,
+        method: 'DELETE',
+      }),
       invalidatesTags: ['ApiKey'],
     }),
 
@@ -163,6 +186,23 @@ export const api = createApi({
     updateCompanyInfo: builder.mutation({
       query: (body) => ({ url: '/config/company/info', method: 'PUT', body }),
       invalidatesTags: ['Company'],
+    }),
+
+    updateCompanyLogo: builder.mutation({
+      query: (body) => ({ url: '/config/company/logo', method: 'PUT', body }),
+      invalidatesTags: ['Company'],
+    }),
+
+    // --- UPLOADS (Cloudflare R2 Pre-signed URLs) ---
+    getPresignedCompanyLogoUrl: builder.mutation({
+      query: (contentType) => ({
+        url: `/uploads/presign/company-logo?content_type=${encodeURIComponent(contentType)}`,
+        method: 'GET',
+      }),
+    }),
+
+    getPresignedAnnouncementImageUrl: builder.mutation({
+      query: () => ({ url: '/uploads/presign/announcement-image', method: 'GET' }),
     }),
 
     // --- LAYOUTS ---
@@ -284,7 +324,10 @@ export const {
   // --- STAGING ---
   useGenerateStagingPasswordMutation,
   useGetStagingPasswordStatusQuery,
+  useGetApiKeysQuery,
   useGenerateApiKeyMutation,
+  useRegenerateApiKeyMutation,
+  useDeleteApiKeyMutation,
 
   useValidateApiKeyQuery,
   useGetGeofenceQuery,
@@ -295,6 +338,9 @@ export const {
   useDeleteUserMutation,
   useGetCompanyInfoQuery,
   useUpdateCompanyInfoMutation,
+  useUpdateCompanyLogoMutation,
+  useGetPresignedCompanyLogoUrlMutation,
+  useGetPresignedAnnouncementImageUrlMutation,
   
   // --- LAYOUTS ---
   useGetLayoutsQuery,

@@ -69,7 +69,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto discrete-scrollbar">
         <div className="px-3 mb-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
           Menu Principal
         </div>
@@ -109,7 +109,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
         )}
 
         {can('announcements', 'read') && (
-          <SidebarItem icon={Bell} label="Avisos" to="/announcements" active={activeTab === '/announcements'} />
+          <SidebarItem icon={Bell} label="Anúncios" to="/announcements" active={activeTab === '/announcements'} />
         )}
 
         {/* Seção admin */}
@@ -124,21 +124,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
           </>
         )}
       </nav>
-
-      {/* Dark Mode Toggle */}
-      <div className="px-3 pb-2">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200"
-          title={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
-        >
-          <div className="relative w-5 h-5 flex items-center justify-center">
-            <Sun className={`w-[18px] h-[18px] absolute transition-all duration-300 ${isDark ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'}`} />
-            <Moon className={`w-[18px] h-[18px] absolute transition-all duration-300 ${isDark ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}`} />
-          </div>
-          <span>{isDark ? 'Modo Claro' : 'Modo Escuro'}</span>
-        </button>
-      </div>
 
       {/* User Section */}
       <div className="px-3 py-4 border-t border-gray-100 dark:border-[#1F1F1F] flex-shrink-0">

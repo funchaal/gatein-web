@@ -33,40 +33,42 @@ export function CardPreview({ data, config }) {
 
   const { header, sub_header, body_rows } = config?.card_layout || {};
 
+  const visibleBodyRows = (body_rows && body_rows.length > 0)
+    ? body_rows.filter(row => {
+        if (row.field === "origin_city" || row.field === "destination_city") {
+          return false;
+        }
+        const val = row.field ? get(data, row.field) : null;
+        return !!val;
+      })
+    : [];
+
   return (
     <div style={styles.container}>
-      {/* --- Top Metadata Row (Time and ID) --- */}
+      {/* --- Top Metadata Row (Tag on Left, Summarized Date on Right) --- */}
       <div style={styles.headerRow}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 16 }}>🚚</span>
-          <span style={styles.displayTime}>{displayTime || "13/05 14:30"}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>
+          Sábado
         </span>
-        <span style={styles.displayId}>#{displayId}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#64748b", letterSpacing: "0.2px" }}>
+          {displayTime || "27/06 18:00"}
+        </span>
       </div>
 
       {config?.card_layout && (
         <>
-          {/* Trip Route Row */}
+          {/* Trip Destination Row */}
           <div style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
             marginBottom: 8,
             marginTop: 4,
             fontSize: 14,
-            fontWeight: 700,
-            color: "#1e293b",
             fontFamily: "sans-serif"
           }}>
-            <span style={{ maxWidth: "40%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {get(data, "origin_city") || data?.custom_data?.origin_city || "Origem"}
-            </span>
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
-              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0, margin: "0 6px" }} />
-              <span style={{ margin: "0 4px", fontSize: 14 }}>🚚</span>
-              <div style={{ flex: 1, borderTop: "1px solid #cbd5e1", height: 0, margin: "0 6px" }} />
-            </div>
-            <span style={{ maxWidth: "40%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "right" }}>
+            <span style={{ marginRight: 6, fontSize: 14 }}>📍</span>
+            <span style={{ fontWeight: 600, color: "#64748b", marginRight: 4 }}>Destino:</span>
+            <span style={{ fontWeight: 700, color: "#1e293b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
               {get(data, "destination_city") || data?.custom_data?.destination_city || "Destino"}
             </span>
           </div>
@@ -75,14 +77,11 @@ export function CardPreview({ data, config }) {
           <CardHeaderElement header={header} subHeader={sub_header} data={data} status={status} statusColor={statusColor} />
 
           {/* --- Dynamic Body Rows --- */}
-          {body_rows && body_rows.length > 0 && (
+          {visibleBodyRows.length > 0 && (
             <div style={styles.bodyRowsContainer}>
-              {body_rows.map((row, i) => {
-                if (row.field === "origin_city" || row.field === "destination_city") {
-                  return null;
-                }
-                return <CardRowElement key={i} row={row} data={data} />;
-              })}
+              {visibleBodyRows.map((row, i) => (
+                <CardRowElement key={i} row={row} data={data} />
+              ))}
             </div>
           )}
         </>

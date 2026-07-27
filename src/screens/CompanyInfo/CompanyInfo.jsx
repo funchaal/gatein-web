@@ -16,7 +16,6 @@ import { ContainerHeader } from '@/components/ui/ContainerHeader';
 import CompanyDataCard from './components/CompanyDataCard';
 import CompanyAddressCard from './components/CompanyAddressCard';
 import CompanyLocationCard from './components/CompanyLocationCard';
-import CompanyCheckinCard from './components/CompanyCheckinCard';
 
 export default function CompanyInfo() {
   const { can, isTerminal } = usePermissions();
@@ -180,16 +179,6 @@ export default function CompanyInfo() {
         setFormData={setFormData}
         canWrite={canWrite}
       />
-
-      {/* Check-in remoto — apenas terminais têm esse campo */}
-      {isTerminal && (
-        <CompanyCheckinCard
-          formData={formData}
-          setFormData={setFormData}
-          canWrite={canWrite}
-        />
-      )}
-
     </div>
   );
 }
