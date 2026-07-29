@@ -1,33 +1,14 @@
-import { useState, useEffect } from 'react';
-import {
-    Code,
-    MapPin,
-    Building2,
-    Bell,
-    HelpCircle,
-    Home as HomeIcon,
-    Package,
-    Plus,
-    LogOut,
-    User,
-    Settings,
-    ChevronDown,
-    KeySquare,
-    Server,
-    ChevronsRight
-} from 'lucide-react';
+import { useState } from 'react';
+import { ChevronsRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { logout } from '../store/slices/authSlice';
-
-
 import Sidebar from './layout/Sidebar';
 
 export default function Layout() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-    const { user, token } = useSelector(state => state.auth);
+    const { user } = useSelector(state => state.auth);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -37,20 +18,6 @@ export default function Layout() {
     };
     
     const isAdmin = user?.is_admin || user?.isAdmin;
-
-
-    const tabs = [
-        { id: '/', label: 'Home', icon: HomeIcon },
-        { id: '/layouts', label: 'Layout Editor', icon: Code },
-        { id: '/geofence', label: 'Geofence', icon: MapPin },
-        { id: '/company', label: 'Dados da Empresa', icon: Building2 },
-        { id: '/services', label: 'Serviços', icon: Server },
-        { id: '/announcements', label: 'Anúncios', icon: Bell },
-        { id: '/users', label: 'Criar Usuário', icon: Plus, admin: true },
-        { id: '/api-keys', label: 'API Private Key', icon: KeySquare, admin: true },
-    ];
-
-    const currentTab = tabs.find(t => t.id === location.pathname);
 
     return (
         <div className="flex h-screen w-full bg-background font-sans text-foreground">

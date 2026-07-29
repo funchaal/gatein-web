@@ -25,7 +25,6 @@ import SidebarItem from './SidebarItem';
 import { usePermissions } from '../../hooks/usePermissions';
 import { logout } from '../../store/slices/authSlice';
 import { colors } from '../../constants/colors';
-import { useTheme } from '../../hooks/useTheme';
 
 const getInitials = (name) => {
   if (!name) return 'U';
@@ -40,9 +39,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
   const activeTab = location.pathname;
-  const { isDark, toggleTheme } = useTheme();
-
-  const { can, isAdmin, isTerminal, isTruckingCompany } = usePermissions();
+  const { can, isAdmin, isTerminal } = usePermissions();
 
   const handleLogout = () => {
     dispatch(logout());

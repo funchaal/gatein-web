@@ -102,6 +102,16 @@ export function CardBuilderItem({ row, index, total, onChange, onDelete, onMove,
  * - Expanded: uppercase value input, color palette, live preview of the pill
  * - Orange hover border, red OBRIGATÓRIO badge on empty value after first open
  */
+function TagPreviewPill({ colorText, value }) {
+  return (
+    <div style={{ padding: "4px 10px", borderRadius: 8, backgroundColor: colorText + "20", flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: colorText }}>
+        {value || "PRÉVIA"}
+      </span>
+    </div>
+  );
+}
+
 export function StatusTagBuilderItem({ tag, index, total, onChange, onDelete, onMove, hasError }) {
   const [expanded, setExpanded] = useState(!!tag.isNew);
   const [draggable, setDraggable] = useState(false);
@@ -117,15 +127,6 @@ export function StatusTagBuilderItem({ tag, index, total, onChange, onDelete, on
 
   const showValidation = !tag.isNew && hasError && !expanded;
   const showFieldError = !tag.isNew && hasError;
-
-  // Exact replica of the statusBadge + statusText styles from CardComponents.jsx
-  const TagPreview = () => (
-    <div style={{ padding: "4px 10px", borderRadius: 8, backgroundColor: colors.text + "20", flexShrink: 0 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: colors.text }}>
-        {tag.value || "PRÉVIA"}
-      </span>
-    </div>
-  );
 
   return (
     <div
@@ -150,7 +151,7 @@ export function StatusTagBuilderItem({ tag, index, total, onChange, onDelete, on
         </div>
 
         {/* Live preview pill */}
-        <TagPreview />
+        <TagPreviewPill colorText={colors.text} value={tag.value} />
 
         <span className="text-xs text-gray-500 dark:text-gray-400 flex-1 truncate">
           {tag.value ? tag.value : <span className="italic text-gray-400 dark:text-gray-500">sem valor</span>}
@@ -190,7 +191,7 @@ export function StatusTagBuilderItem({ tag, index, total, onChange, onDelete, on
             {/* Live preview in edit mode */}
             <div className="space-y-1.5 pb-0.5">
               <Label className="text-xs text-gray-400">Prévia</Label>
-              <TagPreview />
+              <TagPreviewPill colorText={colors.text} value={tag.value} />
             </div>
           </div>
 

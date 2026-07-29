@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -57,8 +57,7 @@ function Item({
   size = "default",
   asChild = false,
   ...props
-} &
-  VariantProps<typeof itemVariants> ) {
+}) {
   const Comp = asChild ? Slot : "div";
   return (
     <Comp
@@ -92,7 +91,7 @@ function ItemMedia({
   className,
   variant = "default",
   ...props
-} & VariantProps<typeof itemMediaVariants>) {
+}) {
   return (
     <div
       data-slot="item-media"

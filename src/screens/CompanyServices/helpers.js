@@ -3,7 +3,7 @@ export const extractErrorMessage = (err, defaultMsg = 'Erro inesperado.') => {
 
   let data = err.data || err.response?.data || err;
   if (typeof data === 'string') {
-    try { data = JSON.parse(data); } catch (e) { /* ignore */ }
+    try { data = JSON.parse(data); } catch { /* ignore */ }
   }
 
   if (data?.detail?.message) return data.detail.message;

@@ -2,7 +2,7 @@ import {
   Calendar, Share2, Info, AlertTriangle, AlertCircle,
   CheckCircle2, Check, ClipboardCheck, Scale, Warehouse, Building2, Package, Search
 } from "lucide-react";
-import { get, formatDate, capitalizeFirst, capitalizeWords } from "../helpers";
+import { get, formatDate, capitalizeFirst } from "../helpers";
 import { ATTENTION_COLORS, HIGHLIGHT_COLORS, TAG_COLORS } from "../constants";
 
 // Icon mapper to translate Material icons to Lucide icons

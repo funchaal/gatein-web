@@ -1,44 +1,39 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { useState, useMemo } from 'react';
+import { Building2, Save, AlertCircle, Loader2 } from 'lucide-react';
+import { ActionButton } from '@/components/ui/ActionButton';
 import LoadingState from '@/components/LoadingState';
-import LeafletMap from '@/components/LeafletMap/LeafletMap';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Building2, Building, MapPin, Navigation, Settings2, Save, AlertCircle, Loader2 } from 'lucide-react';
 import { useGetCompanyInfoQuery, useUpdateCompanyInfoMutation } from '@/services/api';
 import { usePermissions } from '@/hooks/usePermissions';
-import { ActionButton } from '@/components/ui/ActionButton';
 import { colors } from "@/constants/colors";
-import { ContainerHeader } from '@/components/ui/ContainerHeader';
 import CompanyDataCard from './components/CompanyDataCard';
 import CompanyAddressCard from './components/CompanyAddressCard';
+import SafetyIntegrationCard from './components/SafetyIntegrationCard';
 import CompanyLocationCard from './components/CompanyLocationCard';
 
 export default function CompanyInfo() {
   const { can, isTerminal } = usePermissions();
   const canWrite = can('company_information', 'write');
 
+  // Busca dados da empresa ao montar — RTK Query cuida do cache
   const { data, isLoading, isError } = useGetCompanyInfoQuery();
   const [updateCompanyInfo, { isLoading: isSaving }] = useUpdateCompanyInfoMutation();
 
-  const [formData, setFormData] = useState(null);
-  const [originalData, setOriginalData] = useState(null);
+  const [userFormData, setUserFormData] = useState(null);
 
-  // Popula o form quando os dados chegam do servidor
-  useEffect(() => {
-    if (data) {
-      setFormData(data);
-      setOriginalData(data);
-    }
-  }, [data]);
+  const formData = userFormData || data;
+
+  const updateFormData = (updater) => {
+    setUserFormData((prev) => {
+      const base = prev || data || {};
+      return typeof updater === 'function' ? updater(base) : updater;
+    });
+  };
 
   const hasChanges = useMemo(() => {
-    if (!originalData || !formData) return false;
-    return JSON.stringify(formData) !== JSON.stringify(originalData);
-  }, [formData, originalData]);
+    if (!userFormData || !data) return false;
+    return JSON.stringify(userFormData) !== JSON.stringify(data);
+  }, [userFormData, data]);
 
   const isValid = !!formData?.name?.trim();
   const canSave = hasChanges && isValid;
@@ -48,65 +43,49 @@ export default function CompanyInfo() {
     if (!canWrite) return;
     const { id, value } = e.target;
 
-    // IDs no formato "address.street" atualizam o objeto aninhado
-    if (id.startsWith('address.')) {
-      const key = id.replace('address.', '');
-      setFormData((prev) => ({ ...prev, address: { ...prev.address, [key]: value } }));
-    } else {
-      setFormData((prev) => ({ ...prev, [id]: value }));
-    }
-  };
-
-  const handleSwitchChange = (checked) => {
-    if (!canWrite) return;
-    setFormData((prev) => ({ ...prev, use_remote_checkin: checked }));
-  };
-
-  const handleMapClick = (latlng) => {
-    if (!canWrite) return;
-    setFormData((prev) => ({
-      ...prev,
-      address: { ...prev.address, lat: latlng.lat, lng: latlng.lng },
-    }));
-    toast.info(`Localização: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
+    updateFormData((prev) => {
+      if (id.startsWith('address.')) {
+        const key = id.replace('address.', '');
+        return { ...prev, address: { ...prev.address, [key]: value } };
+      } else if (id.startsWith('safety_integration.')) {
+        const key = id.replace('safety_integration.', '');
+        return {
+          ...prev,
+          safety_integration: { ...prev.safety_integration, [key]: value }
+        };
+      } else {
+        return { ...prev, [id]: value };
+      }
+    });
   };
 
   const handleSave = async () => {
     if (!canSave) return;
     try {
-      const payload = {
-        name: formData.name,
-        address: formData.address,
-        // use_remote_checkin e geofence só existem em terminais — o backend ignora para trucking
-        ...(isTerminal && { use_remote_checkin: formData.use_remote_checkin }),
-      };
-      await updateCompanyInfo(payload).unwrap();
-      setOriginalData(formData);
-      toast.success('Configurações salvas com sucesso!');
-    } catch (err) {
-      const msg = err?.data?.detail?.message ?? 'Falha ao salvar configurações.';
-      toast.error(msg);
+      await updateCompanyInfo(formData).unwrap();
+      setUserFormData(null); // reseta estado local para sincronizar com RTK Query
+      toast.success('Informações da empresa salvas com sucesso!');
+    } catch {
+      toast.error('Erro ao salvar informações da empresa.');
     }
   };
 
   // ---------- Loading / Error ----------
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <LoadingState text="Carregando configurações..." />
+      <div className="flex items-center justify-center h-64">
+        <LoadingState text="Carregando dados da empresa..." />
       </div>
     );
   }
 
-  if (isError || !formData) {
+  if (isError) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center space-y-3 max-w-md">
-          <div className="bg-red-50 dark:bg-red-950/30 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
-            <Settings2 className="w-8 h-8 text-red-600 dark:text-red-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Erro ao carregar</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Não foi possível carregar as informações da empresa.</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center space-y-2">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto" />
+          <p className="text-sm text-gray-600">Não foi possível carregar as informações da empresa.</p>
+          <p className="text-xs text-gray-400">Tente recarregar a página.</p>
         </div>
       </div>
     );
@@ -114,8 +93,8 @@ export default function CompanyInfo() {
 
   // ---------- Render ----------
   return (
-    <div className="space-y-4 relative pb-8">
-      {/* Header */}
+    <div className="space-y-6 relative pb-8">
+      {/* Header Sticky */}
       <div className="sticky -top-6 z-20 bg-background/80 backdrop-blur-md -mx-6 px-6 -mt-6 pt-6 pb-4 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg" style={{ backgroundColor: colors.primary + '1A' }}>
@@ -173,10 +152,19 @@ export default function CompanyInfo() {
         canWrite={canWrite}
       />
 
+      {/* Integração de Segurança (Somente Terminais) */}
+      {isTerminal && (
+        <SafetyIntegrationCard
+          formData={formData}
+          handleInputChange={handleInputChange}
+          canWrite={canWrite}
+        />
+      )}
+
       {/* Coordenadas GPS */}
       <CompanyLocationCard
         formData={formData}
-        setFormData={setFormData}
+        setFormData={updateFormData}
         canWrite={canWrite}
       />
     </div>

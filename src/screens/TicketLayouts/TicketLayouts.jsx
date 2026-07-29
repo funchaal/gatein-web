@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useGetTicketLayoutsQuery, useUpsertTicketLayoutMutation, useDeleteTicketLayoutMutation, useGetLayoutsQuery } from "../../services/api";
 import { Eye, Code, Database } from "lucide-react";
-import { colors } from "@/constants/colors";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import LoadingState from "@/components/LoadingState";
@@ -146,7 +145,7 @@ export default function TicketLayouts() {
   // Sync with backend API via RTK Query
   const { data: layoutsRes, isLoading: loadingLayouts } = useGetTicketLayoutsQuery();
   const { data: apptLayoutsRes } = useGetLayoutsQuery();
-  const layouts = layoutsRes || [];
+  const layouts = useMemo(() => layoutsRes || [], [layoutsRes]);
   const [upsertTicketLayout] = useUpsertTicketLayoutMutation();
   const [deleteTicketLayout] = useDeleteTicketLayoutMutation();
 

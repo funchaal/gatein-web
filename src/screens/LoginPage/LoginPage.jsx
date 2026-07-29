@@ -30,7 +30,7 @@ export default function LoginPage() {
       if (result) {
         navigate('/');
       }
-    } catch (err) {
+    } catch {
       // Error is handled by extraReducers in authSlice
     }
   };

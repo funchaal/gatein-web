@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ function InputGroupAddon({
   className,
   align = "inline-start",
   ...props
-} & VariantProps<typeof inputGroupAddonVariants>) {
+}) {
   return (
     <div
       role="group"
@@ -67,7 +67,7 @@ function InputGroupAddon({
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
       onClick={e => {
-        if ((e.target as HTMLElement).closest("button")) {
+        if (e.target.closest("button")) {
           return;
         }
         e.currentTarget.parentElement?.querySelector("input")?.focus();
@@ -101,8 +101,7 @@ function InputGroupButton({
   variant = "ghost",
   size = "xs",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size"> &
-  VariantProps<typeof inputGroupButtonVariants>) {
+}) {
   return (
     <Button
       type={type}

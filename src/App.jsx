@@ -17,7 +17,7 @@ function App() {
     dispatch(setTheme(savedTheme));
     
     restoreSession();
-  }, []);
+  }, [dispatch, restoreSession]);
 
   if (isAppLoading) {
     return <LoadingState text="Carregando aplicativo..." fullScreen />;

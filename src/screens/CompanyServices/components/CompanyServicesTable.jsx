@@ -6,7 +6,7 @@ import LoadingState from '@/components/LoadingState';
 
 export default function CompanyServicesTable({
   filtered, isLoading, isError, searchTerm, setSearchTerm,
-  handleToggleStatus, handleOpenModal, handleOpenEditor, handleDelete
+  handleToggleStatus, handleOpenModal, handleOpenEditor
 }) {
   return (
     <Card className="border-gray-200 dark:border-0 shadow-none overflow-hidden">

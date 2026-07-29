@@ -2,7 +2,6 @@ import { ArrowLeft, LayoutTemplate, Check, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/ActionButton";
 import { Input } from "@/components/ui/input";
-import { colors } from "@/constants/colors";
 
 export default function LayoutEditorHeader({
   handleBackToList,

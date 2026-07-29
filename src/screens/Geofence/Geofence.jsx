@@ -1,12 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
-  MapPin, Navigation, Maximize2, Save, AlertCircle, Loader2, Info
+  MapPin, Save, AlertCircle, Loader2, Info
 } from 'lucide-react';
-import LeafletMap from '@/components/LeafletMap/LeafletMap';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { ActionButton } from '@/components/ui/ActionButton';
 import LoadingState from '@/components/LoadingState';
 import { toast } from 'sonner';
@@ -14,7 +9,6 @@ import { useGetGeofenceQuery, useUpdateGeofenceMutation } from '@/services/api';
 import { usePermissions } from '@/hooks/usePermissions';
 import { DEFAULT_CENTER, DEFAULT_RADIUS } from './helpers';
 import { colors } from "@/constants/colors";
-import { ContainerHeader } from '@/components/ui/ContainerHeader';
 import GeofenceCoordinatesCard from './components/GeofenceCoordinatesCard';
 import GeofenceRadiusCard from './components/GeofenceRadiusCard';
 import GeofenceMapCard from './components/GeofenceMapCard';
@@ -28,21 +22,12 @@ export default function Geofence() {
   const { data, isLoading, isError } = useGetGeofenceQuery();
   const [updateGeofence, { isLoading: isSaving }] = useUpdateGeofenceMutation();
 
-  const [config, setConfig] = useState({
-    center: DEFAULT_CENTER,
-    radius: DEFAULT_RADIUS,
-    use_remote_checkin: false,
-  });
+  const [userConfig, setUserConfig] = useState(null);
 
-  const [originalConfig, setOriginalConfig] = useState(null);
-
-  // Popula o form quando os dados chegam
-  useEffect(() => {
-    if (!data) return;
-
+  const serverConfig = useMemo(() => {
+    if (!data) return { center: DEFAULT_CENTER, radius: DEFAULT_RADIUS, use_remote_checkin: false };
     const { geofence, address, use_remote_checkin } = data;
-
-    const initialConfig = {
+    return {
       center: {
         lat: geofence?.center?.lat ?? address?.lat ?? DEFAULT_CENTER.lat,
         lng: geofence?.center?.lng ?? address?.lng ?? DEFAULT_CENTER.lng,
@@ -50,28 +35,30 @@ export default function Geofence() {
       radius: geofence?.radius ?? DEFAULT_RADIUS,
       use_remote_checkin: use_remote_checkin ?? false,
     };
-    setConfig(initialConfig);
-    setOriginalConfig(initialConfig);
   }, [data]);
 
+  const config = userConfig || serverConfig;
+
+  const updateConfig = useCallback((updater) => {
+    setUserConfig((prev) => {
+      const base = prev || serverConfig;
+      return typeof updater === 'function' ? updater(base) : updater;
+    });
+  }, [serverConfig]);
+
   const hasChanges = useMemo(() => {
-    if (!originalConfig) return false;
-    return (
-      config.center.lat !== originalConfig.center.lat ||
-      config.center.lng !== originalConfig.center.lng ||
-      config.radius !== originalConfig.radius ||
-      config.use_remote_checkin !== originalConfig.use_remote_checkin
-    );
-  }, [config, originalConfig]);
+    if (!userConfig) return false;
+    return JSON.stringify(userConfig) !== JSON.stringify(serverConfig);
+  }, [userConfig, serverConfig]);
 
   const isValid = typeof config.center.lat === 'number' && typeof config.center.lng === 'number' && config.radius > 0;
   const canSave = hasChanges && isValid;
 
-  const handleMapClick = (latlng) => {
+  const handleMapClick = useCallback((latlng) => {
     if (!canWrite) return;
-    setConfig((prev) => ({ ...prev, center: { lat: latlng.lat, lng: latlng.lng } }));
+    updateConfig((prev) => ({ ...prev, center: { lat: latlng.lat, lng: latlng.lng } }));
     toast.info(`Centro: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
-  };
+  }, [canWrite, updateConfig]);
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -80,7 +67,7 @@ export default function Geofence() {
         geofence: { center: config.center, radius: config.radius },
         use_remote_checkin: config.use_remote_checkin,
       }).unwrap();
-      setOriginalConfig(config); // Update original config after save
+      setUserConfig(null); // Reseta para o estado sincronizado com RTK Query
       toast.success('Geofence salva com sucesso!');
     } catch {
       toast.error('Erro ao salvar geofence.');
@@ -166,21 +153,21 @@ export default function Geofence() {
           {/* Check-in Remoto */}
           <GeofenceCheckinCard
             useRemoteCheckin={config.use_remote_checkin}
-            setUseRemoteCheckin={(val) => setConfig((prev) => ({ ...prev, use_remote_checkin: val }))}
+            setUseRemoteCheckin={(val) => updateConfig((prev) => ({ ...prev, use_remote_checkin: val }))}
             canWrite={canWrite}
           />
 
           {/* Coordenadas */}
           <GeofenceCoordinatesCard
             config={config}
-            setConfig={setConfig}
+            setConfig={updateConfig}
             canWrite={canWrite}
           />
 
           {/* Raio */}
           <GeofenceRadiusCard
             config={config}
-            setConfig={setConfig}
+            setConfig={updateConfig}
             canWrite={canWrite}
             radiusInKm={radiusInKm}
             areaInKm2={areaInKm2}

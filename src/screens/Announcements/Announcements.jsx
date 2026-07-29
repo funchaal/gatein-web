@@ -14,7 +14,6 @@ import {
   useUpdateAnnouncementMutation,
   useUpdateAnnouncementStatusMutation,
   useDeleteAnnouncementMutation,
-  useGetCompanyInfoQuery,
   useGetPresignedAnnouncementImageUrlMutation,
 } from '@/services/api';
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -24,7 +23,6 @@ import { compressToWebP, uploadToR2 } from '@/lib/imageUpload';
 
 export default function Announcements() {
   const { data: announcementsData, isLoading, isError } = useGetAnnouncementsQuery();
-  const { data: companyInfo } = useGetCompanyInfoQuery();
   const [createAnnouncement, { isLoading: isCreating }] = useCreateAnnouncementMutation();
   const [updateAnnouncement, { isLoading: isUpdating }] = useUpdateAnnouncementMutation();
   const [deleteAnnouncement] = useDeleteAnnouncementMutation();
@@ -217,7 +215,7 @@ export default function Announcements() {
         toast.success('Anúncio criado com sucesso!');
       }
       handleCloseEditor();
-    } catch (err) {
+    } catch {
       toast.error('Erro ao salvar o anúncio. Verifique os dados inseridos.');
     }
   };
@@ -230,7 +228,7 @@ export default function Announcements() {
       if (viewMode === 'editor') {
         handleCloseEditor();
       }
-    } catch (err) {
+    } catch {
       toast.error('Erro ao excluir o anúncio.');
     }
   };
@@ -239,7 +237,7 @@ export default function Announcements() {
     try {
       await updateStatus({ id, is_active: !currentStatus }).unwrap();
       toast.success(`Anúncio ${!currentStatus ? 'ativado' : 'desativado'} com sucesso.`);
-    } catch (err) {
+    } catch {
       toast.error('Erro ao alterar status do anúncio.');
     }
   };
@@ -261,10 +259,6 @@ export default function Announcements() {
       minute: '2-digit'
     });
   };
-
-  const companyLogoUrl = companyInfo?.config?.logo || companyInfo?.config?.logo_url || companyInfo?.config?.icon_url || companyInfo?.logo_url || null;
-  const companyName = companyInfo?.name || "Sua Empresa";
-  const companyBranch = companyInfo?.address?.city ? `${companyInfo.address.city} - ${companyInfo.address.state || ""}` : "Unidade Principal";
 
   // ── VIEW: LIST MODE ────────────────────────────────────────────────
   if (viewMode === 'list') {

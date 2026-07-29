@@ -124,7 +124,7 @@ export default function TripLayouts() {
   // ── API DATA SYNC (RTK QUERY) ──────────────────────────────────────
   // Fetch layouts list from backend API
   const { data: layoutsRes, isLoading: loadingLayouts } = useGetTripLayoutsQuery();
-  const layouts = layoutsRes || [];
+  const layouts = useMemo(() => layoutsRes || [], [layoutsRes]);
 
   // Hooks to create/modify and delete layout schemas
   const [upsertTripLayout] = useUpsertTripLayoutMutation();
