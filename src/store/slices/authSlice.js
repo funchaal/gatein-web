@@ -70,14 +70,12 @@ const authSlice = createSlice({
           state.user = action.payload.user;
         }
       })
-      .addMatcher(api.endpoints.restoreSession.matchRejected, (state, action) => {
+      .addMatcher(api.endpoints.restoreSession.matchRejected, (state) => {
         state.isAppLoading = false;
         state.isAuthenticated = false;
         state.token = null;
         state.user = initialUser;
-        if (action.payload?.data?.detail || action.payload?.error) {
-          state.error = action.payload;
-        }
+        state.error = null;
       });
   },
 });

@@ -14,8 +14,12 @@ export default function LoginPage() {
   const [loginUser, { isLoading }] = useLoginMutation();
   const [formData, setFormData] = useState({ username: 'admin_btp', password: '1234' });
   const [focusedField, setFocusedField] = useState(null);
+  const [passwordError, setPasswordError] = useState('');
 
   const handleChange = (e) => {
+    if (passwordError) {
+      setPasswordError('');
+    }
     if (error) {
       dispatch(clearError());
     }
@@ -25,13 +29,14 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setPasswordError('');
     try {
       const result = await loginUser(formData).unwrap();
       if (result) {
         navigate('/');
       }
     } catch {
-      // Error is handled by extraReducers in authSlice
+      setPasswordError('Senha incorreta');
     }
   };
 
@@ -40,8 +45,6 @@ export default function LoginPage() {
       dispatch(clearError());
     };
   }, [dispatch]);
-
-  const displayError = error?.data?.detail?.message || error?.message || (error && 'Credenciais inválidas');
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
@@ -239,11 +242,23 @@ export default function LoginPage() {
                 padding: '0 16px',
                 height: '48px',
                 borderRadius: '12px',
-                border: 'none',
-                backgroundColor: focusedField === 'password' ? (isDark ? '#1e293b' : '#eef2f7') : (isDark ? '#0f172a' : '#f1f5f9'),
+                border: passwordError ? `1px solid ${isDark ? '#991b1b' : '#fca5a5'}` : '1px solid transparent',
+                backgroundColor: passwordError
+                  ? (isDark ? '#451a1a' : '#ffe9e9')
+                  : (focusedField === 'password'
+                      ? (isDark ? '#1e293b' : '#eef2f7')
+                      : (isDark ? '#0f172a' : '#f1f5f9')),
                 transition: 'all 0.2s ease',
               }}>
-                <Lock style={{ width: '18px', height: '18px', color: focusedField === 'password' ? colors.primary : (isDark ? '#64748b' : '#94a3b8'), transition: 'color 0.2s ease', flexShrink: 0 }} />
+                <Lock style={{
+                  width: '18px',
+                  height: '18px',
+                  color: passwordError
+                    ? '#dc2626'
+                    : (focusedField === 'password' ? colors.primary : (isDark ? '#64748b' : '#94a3b8')),
+                  transition: 'color 0.2s ease',
+                  flexShrink: 0
+                }} />
                 <input
                   type="password"
                   name="password"
@@ -264,24 +279,19 @@ export default function LoginPage() {
                   }}
                 />
               </div>
+              {passwordError && (
+                <span style={{
+                  display: 'block',
+                  color: '#dc2626',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  marginTop: '6px',
+                  marginLeft: '4px',
+                }}>
+                  {passwordError}
+                </span>
+              )}
             </div>
-
-            {/* Error */}
-            {error && (
-              <div style={{
-                padding: '12px 16px',
-                backgroundColor: isDark ? '#7f1d1d' : '#fef2f2',
-                border: `1px solid ${isDark ? '#991b1b' : '#fecaca'}`,
-                borderRadius: '12px',
-                color: isDark ? '#fca5a5' : '#dc2626',
-                fontSize: '13px',
-                fontWeight: 500,
-                marginBottom: '20px',
-                lineHeight: 1.5,
-              }}>
-                {displayError}
-              </div>
-            )}
 
             {/* Submit */}
             <button
