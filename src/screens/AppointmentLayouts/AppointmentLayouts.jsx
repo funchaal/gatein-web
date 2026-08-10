@@ -391,6 +391,20 @@ export default function AppointmentLayouts() {
    * Restores react-controlled state configurations upon manual raw JSON input tweaks.
    */
   const handleJsonChange = (parsed) => {
+    if (!parsed || typeof parsed !== "object") return;
+
+    if (parsed.layout_ref !== undefined) {
+      setSaveRef(parsed.layout_ref);
+    } else if (parsed.ref !== undefined) {
+      setSaveRef(parsed.ref);
+    }
+
+    if (parsed.layout_title !== undefined) {
+      setSaveTitle(parsed.layout_title);
+    } else if (parsed.title !== undefined) {
+      setSaveTitle(parsed.title);
+    }
+
     setLayout({
       card_layout: {
         header: parsed.card_layout?.header || {},
@@ -446,7 +460,15 @@ export default function AppointmentLayouts() {
     }
   };
 
-  const jsonStr = JSON.stringify(cleanLayout(), null, 2);
+  const tabJsonObj = useMemo(() => {
+    return {
+      layout_ref: saveRef,
+      layout_title: saveTitle,
+      ...cleanLayoutData(layout),
+    };
+  }, [saveRef, saveTitle, layout]);
+
+  const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
 
   // ── ROUTING AND RENDER TRIGGERS ────────────────────────────────────
 

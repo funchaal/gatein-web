@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { FlaskConical, AlertCircle, Copy, CheckCircle2, RefreshCw, Shield, Loader2, Info, Lock, Building2 } from 'lucide-react';
+import { FlaskConical, AlertCircle, RefreshCw, Shield, Loader2, Info, Building2 } from 'lucide-react';
 import { ActionButton } from '@/components/ui/ActionButton';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useGenerateStagingPasswordMutation, useGetStagingPasswordStatusQuery } from '@/services/api';
 import { colors } from "@/constants/colors";
+import StagingPasswordModal from './components/StagingPasswordModal';
 
 export default function StagingPassword() {
   const [generateStagingPassword, { isLoading, error }] = useGenerateStagingPasswordMutation();
@@ -26,6 +27,7 @@ export default function StagingPassword() {
       setGeneratedPassword(result?.data?.staging_password);
       setGeneratedAt(new Date().toLocaleString('pt-BR'));
       setShowPassword(true);
+      toast.success('Nova senha de homologação gerada!');
       refetchStatus();
     } catch (err) {
       const msg = err?.data?.detail?.message ?? 'Erro ao gerar senha de homologação.';
@@ -75,51 +77,6 @@ export default function StagingPassword() {
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Erro ao gerar senha</p>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{errorMessage}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Senha gerada — alerta temporário */}
-      {showPassword && generatedPassword && (
-        <div className="p-4 border border-amber-200 dark:border-amber-900/50 rounded-xl bg-amber-50 dark:bg-amber-950/30 space-y-3">
-          <div className="flex items-start gap-3">
-            <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                Senha gerada — salve agora!
-              </p>
-              <p className="text-xs text-amber-600 dark:text-amber-500 mt-0.5">
-                Esta senha não será exibida novamente. Copie e compartilhe com a equipe de QA.
-              </p>
-            </div>
-          </div>
-
-          {/* Password display */}
-          <div className="flex items-center gap-2 p-3 bg-white dark:bg-[#111] border border-amber-200 dark:border-amber-900/40 rounded-lg font-mono text-sm break-all">
-            <span className="flex-1 text-gray-900 dark:text-gray-100 select-all">
-              {generatedPassword}
-            </span>
-            <button
-              id="staging-copy-btn"
-              onClick={handleCopy}
-              className="flex-shrink-0 p-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
-              title="Copiar senha"
-            >
-              {copied
-                ? <CheckCircle2 className="w-4 h-4 text-green-500" />
-                : <Copy className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              }
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-amber-500 dark:text-amber-600">Gerada em: {generatedAt}</p>
-            <button
-              onClick={handleDismiss}
-              className="text-xs text-amber-600 dark:text-amber-500 underline hover:no-underline"
-            >
-              Fechar
-            </button>
           </div>
         </div>
       )}
@@ -188,7 +145,7 @@ export default function StagingPassword() {
           <div className="flex items-center justify-between gap-4 p-4 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#262626] rounded-xl">
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                {statusData?.has_password ? 'Regerear senha' : 'Gerar senha'}
+                {statusData?.has_password ? 'Regenerar senha' : 'Gerar senha'}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 {statusData?.has_password
@@ -217,6 +174,16 @@ export default function StagingPassword() {
 
         </CardContent>
       </Card>
+
+      {/* Modal de exibição da nova senha de homologação */}
+      <StagingPasswordModal
+        showModal={showPassword}
+        generatedPassword={generatedPassword}
+        copied={copied}
+        handleCopy={handleCopy}
+        handleCloseModal={handleDismiss}
+        generatedAt={generatedAt}
+      />
     </div>
   );
 }

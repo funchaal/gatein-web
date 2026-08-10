@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Building2, Save, AlertCircle, Loader2 } from 'lucide-react';
+import { Building2, Save, AlertCircle, Loader2, Code } from 'lucide-react';
 import { ActionButton } from '@/components/ui/ActionButton';
 import LoadingState from '@/components/LoadingState';
 import { toast } from 'sonner';
@@ -10,6 +10,7 @@ import CompanyDataCard from './components/CompanyDataCard';
 import CompanyAddressCard from './components/CompanyAddressCard';
 import SafetyIntegrationCard from './components/SafetyIntegrationCard';
 import CompanyLocationCard from './components/CompanyLocationCard';
+import JsonConfigModal from '@/components/ui/JsonConfigModal';
 
 export default function CompanyInfo() {
   const { can, isTerminal } = usePermissions();
@@ -20,6 +21,7 @@ export default function CompanyInfo() {
   const [updateCompanyInfo, { isLoading: isSaving }] = useUpdateCompanyInfoMutation();
 
   const [userFormData, setUserFormData] = useState(null);
+  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
 
   const formData = userFormData || data;
 
@@ -106,8 +108,16 @@ export default function CompanyInfo() {
           </div>
         </div>
 
-        {canWrite && (
-          <div className="flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <ActionButton
+            onClick={() => setIsCodeModalOpen(true)}
+            className="h-9 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700"
+          >
+            <Code className="w-3.5 h-3.5 mr-2" />
+            Exibir código
+          </ActionButton>
+
+          {canWrite && (
             <ActionButton
               onClick={handleSave}
               isLoading={isSaving}
@@ -126,8 +136,8 @@ export default function CompanyInfo() {
                 </>
               )}
             </ActionButton>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Banner somente leitura */}
@@ -165,6 +175,17 @@ export default function CompanyInfo() {
       <CompanyLocationCard
         formData={formData}
         setFormData={updateFormData}
+        canWrite={canWrite}
+      />
+
+      {/* Modal de Código JSON */}
+      <JsonConfigModal
+        isOpen={isCodeModalOpen}
+        onClose={() => setIsCodeModalOpen(false)}
+        title="Código de Configuração da Empresa (JSON)"
+        description="Visualize, copie ou cole a estrutura JSON com os dados da empresa."
+        data={formData}
+        onApply={(parsedJson) => setUserFormData(parsedJson)}
         canWrite={canWrite}
       />
     </div>

@@ -86,8 +86,8 @@ export default function CardLayoutBuilder({
         </div>
       </section>
 
-      {/* --- Status Tags Section --- */}
-      <section className="space-y-3">
+      {/* --- Status Tags Section (Desabilitado temporariamente) --- */}
+      {/* <section className="space-y-3">
         <div className="flex justify-between items-center">
           <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 h-5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Tags de Status
@@ -122,7 +122,7 @@ export default function CardLayoutBuilder({
             </div>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* --- Body Rows Section --- */}
       <section className="space-y-3">

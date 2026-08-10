@@ -6,3 +6,6 @@ export const IS_DEVELOPMENT = ENVIRONMENT === 'development';
 export const IS_HOMOLOGATION = ENVIRONMENT === 'homologation' || ENVIRONMENT === 'staging';
 export const IS_PRODUCTION = ENVIRONMENT === 'production';
 
+export const IS_HOMOLOGATION_OR_DEV = IS_HOMOLOGATION || IS_DEVELOPMENT;
+
+

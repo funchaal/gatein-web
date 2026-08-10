@@ -86,8 +86,8 @@ export default function CardLayoutBuilder({
         </div>
       </section>
 
-      {/* --- Status Tags Section --- */}
-      <section className="space-y-3">
+      {/* --- Status Tags Section (Desabilitado temporariamente) --- */}
+      {/* <section className="space-y-3">
         <div className="flex justify-between items-center">
           <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 h-5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Tags de Status
@@ -114,6 +114,18 @@ export default function CardLayoutBuilder({
               hasError={validation.statusTags?.[tag.id]}
             />
           ))}
+          {(layout.card_layout.status_tags || []).map((tag, i) => (
+            <StatusTagBuilderItem
+              key={tag.id}
+              tag={tag}
+              index={i}
+              total={(layout.card_layout.status_tags || []).length}
+              onChange={updateStatusTag}
+              onDelete={deleteStatusTag}
+              onMove={moveStatusTag}
+              hasError={validation.statusTags?.[tag.id]}
+            />
+          ))}
           {(layout.card_layout.status_tags || []).length === 0 && (
             <div className="text-center py-4 bg-white dark:bg-card border border-gray-200 dark:border-gray-800 border-dashed rounded-xl">
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -122,7 +134,7 @@ export default function CardLayoutBuilder({
             </div>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* --- Body Rows Section --- */}
       <section className="space-y-3">

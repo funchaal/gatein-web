@@ -95,27 +95,27 @@ export default function UsersTable({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1.5 items-center">
-                          {/* Mostra só os módulos relevantes pro tipo de empresa */}
-                          {modules.slice(0, 3).map(({ key, label }) => {
-                            const val = user.permissions?.[key] ?? 'none';
-                            if (val === 'none') return null;
-                            return (
-                              <div
-                                key={key}
-                                className="inline-flex items-center h-6 gap-1.5 bg-gray-100/60 dark:bg-[#1A1A1C] rounded-full pl-2.5 pr-1 text-xs"
-                              >
-                                <span className="font-medium text-gray-600 dark:text-gray-400 text-[11px] leading-none">
-                                  {label}
-                                </span>
-                                <span className="w-[3px] h-[3px] bg-gray-300 dark:bg-gray-700 rounded-full" />
-                                <PermissionBadge value={val} />
-                              </div>
-                            );
-                          })}
-                          {user.is_admin && (
+                          {user.is_admin ? (
                             <span className="h-6 px-2.5 text-[10px] font-semibold bg-purple-100/70 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 rounded-full uppercase tracking-wider inline-flex items-center justify-center gap-1">
                               <Shield className="w-3 h-3" /> Acesso total
                             </span>
+                          ) : (
+                            modules.slice(0, 3).map(({ key, label }) => {
+                              const val = user.permissions?.[key] ?? 'none';
+                              if (val === 'none') return null;
+                              return (
+                                <div
+                                  key={key}
+                                  className="inline-flex items-center h-6 gap-1.5 bg-gray-100/60 dark:bg-[#1A1A1C] rounded-full pl-2.5 pr-1 text-xs"
+                                >
+                                  <span className="font-medium text-gray-600 dark:text-gray-400 text-[11px] leading-none">
+                                    {label}
+                                  </span>
+                                  <span className="w-[3px] h-[3px] bg-gray-300 dark:bg-gray-700 rounded-full" />
+                                  <PermissionBadge value={val} />
+                                </div>
+                              );
+                            })
                           )}
                         </div>
                       </td>

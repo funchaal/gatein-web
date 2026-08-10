@@ -17,6 +17,9 @@ import {
   Bell,
   Ticket,
   FlaskConical,
+  UserPlus,
+  Send,
+  Inbox,
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -25,6 +28,7 @@ import SidebarItem from './SidebarItem';
 import { usePermissions } from '../../hooks/usePermissions';
 import { logout } from '../../store/slices/authSlice';
 import { colors } from '../../constants/colors';
+import { IS_HOMOLOGATION_OR_DEV } from '../../constants/const';
 
 const getInitials = (name) => {
   if (!name) return 'U';
@@ -109,6 +113,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
           <SidebarItem icon={Bell} label="Anúncios" to="/announcements" active={activeTab === '/announcements'} />
         )}
 
+        {can('submissions', 'read') && (
+          <>
+            <SidebarItem icon={Send} label="Tipos de Envio" to="/submission-types" active={activeTab === '/submission-types'} />
+            <SidebarItem icon={Inbox} label="Envios Recebidos" to="/submissions" active={activeTab === '/submissions'} />
+          </>
+        )}
+
         {/* Seção admin */}
         {isAdmin && (
           <>
@@ -117,7 +128,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
             </div>
             <SidebarItem icon={Plus} label="Usuários" to="/users" active={activeTab === '/users'} />
             <SidebarItem icon={Package} label="API Keys" to="/api-keys" active={activeTab === '/api-keys'} />
-            <SidebarItem icon={FlaskConical} label="Senha de Homologação" to="/staging-password" active={activeTab === '/staging-password'} />
+            {IS_HOMOLOGATION_OR_DEV && (
+              <>
+                <SidebarItem icon={FlaskConical} label="Senha de Homologação" to="/staging-password" active={activeTab === '/staging-password'} />
+                <SidebarItem icon={UserPlus} label="Criar Motorista (Fake)" to="/create-fake-driver" active={activeTab === '/create-fake-driver'} />
+              </>
+            )}
           </>
         )}
       </nav>

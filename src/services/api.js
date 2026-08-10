@@ -14,7 +14,7 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Auth', 'User', 'Company', 'Geofence', 'Schema', 'Dashboard', 'ApiKey', 'Layout', 'TicketLayout', 'Service', 'Announcement'],
+  tagTypes: ['Auth', 'User', 'Company', 'Geofence', 'Schema', 'Dashboard', 'ApiKey', 'Layout', 'TicketLayout', 'Service', 'Announcement', 'SubmissionType', 'Submission'],
   endpoints: (builder) => ({
     // --- AUTH ---
     login: builder.mutation({
@@ -101,6 +101,17 @@ export const api = createApi({
     getStagingPasswordStatus: builder.query({
       query: () => '/auth/staging/password/status',
       transformResponse: (res) => res.data,
+    }),
+
+    /**
+     * Cria um motorista fake para testes em ambiente de homologação.
+     */
+    createFakeDriver: builder.mutation({
+      query: (body) => ({
+        url: '/auth/staging/create-driver',
+        method: 'POST',
+        body,
+      }),
     }),
 
 
@@ -314,6 +325,35 @@ export const api = createApi({
       query: (id) => ({ url: `/announcements/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Announcement'],
     }),
+
+    // --- SUBMISSION TYPES ---
+    getSubmissionTypes: builder.query({
+      query: () => '/config/submission-types',
+      transformResponse: (res) => res.data,
+      providesTags: ['SubmissionType'],
+    }),
+    upsertSubmissionType: builder.mutation({
+      query: (body) => ({ url: '/config/submission-types', method: 'PUT', body }),
+      invalidatesTags: ['SubmissionType'],
+    }),
+    deleteSubmissionType: builder.mutation({
+      query: (ref) => ({ url: `/config/submission-types/${ref}`, method: 'DELETE' }),
+      invalidatesTags: ['SubmissionType'],
+    }),
+
+    // --- SUBMISSIONS ---
+    getSubmissions: builder.query({
+      query: ({ tax_id, limit = 50, offset = 0 } = {}) => ({
+        url: '/submissions',
+        params: { tax_id, limit, offset },
+      }),
+      providesTags: ['Submission'],
+    }),
+    getSubmissionDetail: builder.query({
+      query: (id) => `/submissions/${id}`,
+      transformResponse: (res) => res.data,
+      providesTags: ['Submission'],
+    }),
   }),
 });
 
@@ -324,6 +364,7 @@ export const {
   // --- STAGING ---
   useGenerateStagingPasswordMutation,
   useGetStagingPasswordStatusQuery,
+  useCreateFakeDriverMutation,
   useGetApiKeysQuery,
   useGenerateApiKeyMutation,
   useRegenerateApiKeyMutation,
@@ -373,4 +414,14 @@ export const {
   useUpdateAnnouncementMutation,
   useUpdateAnnouncementStatusMutation,
   useDeleteAnnouncementMutation,
+
+  // --- SUBMISSION TYPES ---
+  useGetSubmissionTypesQuery,
+  useUpsertSubmissionTypeMutation,
+  useDeleteSubmissionTypeMutation,
+
+  // --- SUBMISSIONS ---
+  useGetSubmissionsQuery,
+  useLazyGetSubmissionsQuery,
+  useGetSubmissionDetailQuery,
 } = api;

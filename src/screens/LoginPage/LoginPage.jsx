@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { clearError } from '../../store/slices/authSlice';
 import { useLoginMutation } from '../../services/api';
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { colors } from '@/constants/colors';
 
 export default function LoginPage() {
@@ -178,116 +180,44 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit}>
             {/* Email */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: isDark ? '#cbd5e1' : '#334155',
-                marginBottom: '8px',
-                letterSpacing: '0.01em',
-              }}>
+            <div className="mb-5 space-y-2">
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                 Email
-              </label>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '0 16px',
-                height: '48px',
-                borderRadius: '12px',
-                border: 'none',
-                backgroundColor: focusedField === 'username' ? (isDark ? '#1e293b' : '#eef2f7') : (isDark ? '#0f172a' : '#f1f5f9'),
-                transition: 'all 0.2s ease',
-              }}>
-                <Mail style={{ width: '18px', height: '18px', color: focusedField === 'username' ? colors.primary : (isDark ? '#64748b' : '#94a3b8'), transition: 'color 0.2s ease', flexShrink: 0 }} />
-                <input
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <Input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  onFocus={() => setFocusedField('username')}
-                  onBlur={() => setFocusedField(null)}
                   placeholder="user@example.com"
                   required
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: '14px',
-                    color: isDark ? '#f8fafc' : '#0f172a',
-                    backgroundColor: 'transparent',
-                    fontFamily: 'inherit',
-                  }}
+                  className="pl-10 h-11"
                 />
               </div>
             </div>
 
             {/* Password */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: isDark ? '#cbd5e1' : '#334155',
-                marginBottom: '8px',
-                letterSpacing: '0.01em',
-              }}>
+            <div className="mb-6 space-y-2">
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                 Senha
-              </label>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '0 16px',
-                height: '48px',
-                borderRadius: '12px',
-                border: passwordError ? `1px solid ${isDark ? '#991b1b' : '#fca5a5'}` : '1px solid transparent',
-                backgroundColor: passwordError
-                  ? (isDark ? '#451a1a' : '#ffe9e9')
-                  : (focusedField === 'password'
-                      ? (isDark ? '#1e293b' : '#eef2f7')
-                      : (isDark ? '#0f172a' : '#f1f5f9')),
-                transition: 'all 0.2s ease',
-              }}>
-                <Lock style={{
-                  width: '18px',
-                  height: '18px',
-                  color: passwordError
-                    ? '#dc2626'
-                    : (focusedField === 'password' ? colors.primary : (isDark ? '#64748b' : '#94a3b8')),
-                  transition: 'color 0.2s ease',
-                  flexShrink: 0
-                }} />
-                <input
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <Input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  onFocus={() => setFocusedField('password')}
-                  onBlur={() => setFocusedField(null)}
                   placeholder="••••••••"
                   required
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: '14px',
-                    color: isDark ? '#f8fafc' : '#0f172a',
-                    backgroundColor: 'transparent',
-                    fontFamily: 'inherit',
-                  }}
+                  aria-invalid={Boolean(passwordError)}
+                  className="pl-10 h-11"
                 />
               </div>
               {passwordError && (
-                <span style={{
-                  display: 'block',
-                  color: '#dc2626',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  marginTop: '6px',
-                  marginLeft: '4px',
-                }}>
+                <span className="block text-xs font-medium text-red-600 mt-1.5 ml-1">
                   {passwordError}
                 </span>
               )}

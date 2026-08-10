@@ -14,6 +14,7 @@ const COMPANY_TYPE_MODULES = {
     'users',
     'api_keys',
     'announcements',
+    'submissions',
   ]),
   trucking_company: new Set([
     'trip_layouts',
@@ -22,6 +23,7 @@ const COMPANY_TYPE_MODULES = {
     'users',
     'api_keys',
     'announcements',
+    'submissions',
   ]),
 };
 

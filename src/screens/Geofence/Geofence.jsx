@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import {
-  MapPin, Save, AlertCircle, Loader2, Info
+  MapPin, Save, AlertCircle, Loader2, Info, Code
 } from 'lucide-react';
 import { ActionButton } from '@/components/ui/ActionButton';
 import LoadingState from '@/components/LoadingState';
@@ -13,6 +13,7 @@ import GeofenceCoordinatesCard from './components/GeofenceCoordinatesCard';
 import GeofenceRadiusCard from './components/GeofenceRadiusCard';
 import GeofenceMapCard from './components/GeofenceMapCard';
 import GeofenceCheckinCard from './components/GeofenceCheckinCard';
+import JsonConfigModal from '@/components/ui/JsonConfigModal';
 
 export default function Geofence() {
   const { can } = usePermissions();
@@ -23,6 +24,7 @@ export default function Geofence() {
   const [updateGeofence, { isLoading: isSaving }] = useUpdateGeofenceMutation();
 
   const [userConfig, setUserConfig] = useState(null);
+  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
 
   const serverConfig = useMemo(() => {
     if (!data) return { center: DEFAULT_CENTER, radius: DEFAULT_RADIUS, use_remote_checkin: false };
@@ -53,6 +55,41 @@ export default function Geofence() {
 
   const isValid = typeof config.center.lat === 'number' && typeof config.center.lng === 'number' && config.radius > 0;
   const canSave = hasChanges && isValid;
+
+  const jsonPayload = useMemo(() => ({
+    geofence: {
+      center: config.center,
+      radius: config.radius,
+    },
+    use_remote_checkin: config.use_remote_checkin,
+  }), [config]);
+
+  const handleApplyCode = (parsedJson) => {
+    let newCenter = config.center;
+    let newRadius = config.radius;
+    let newRemoteCheckin = config.use_remote_checkin;
+
+    if (parsedJson.geofence) {
+      if (parsedJson.geofence.center) newCenter = parsedJson.geofence.center;
+      if (parsedJson.geofence.radius !== undefined) newRadius = Number(parsedJson.geofence.radius);
+    } else if (parsedJson.center) {
+      newCenter = parsedJson.center;
+      if (parsedJson.radius !== undefined) newRadius = Number(parsedJson.radius);
+    }
+
+    if (parsedJson.use_remote_checkin !== undefined) {
+      newRemoteCheckin = Boolean(parsedJson.use_remote_checkin);
+    }
+
+    setUserConfig({
+      center: {
+        lat: Number(newCenter?.lat) || DEFAULT_CENTER.lat,
+        lng: Number(newCenter?.lng) || DEFAULT_CENTER.lng,
+      },
+      radius: Number(newRadius) || DEFAULT_RADIUS,
+      use_remote_checkin: newRemoteCheckin,
+    });
+  };
 
   const handleMapClick = useCallback((latlng) => {
     if (!canWrite) return;
@@ -113,8 +150,16 @@ export default function Geofence() {
           </div>
         </div>
 
-        {canWrite && (
-          <div className="flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <ActionButton
+            onClick={() => setIsCodeModalOpen(true)}
+            className="h-9 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700"
+          >
+            <Code className="w-3.5 h-3.5 mr-2" />
+            Exibir código
+          </ActionButton>
+
+          {canWrite && (
             <ActionButton
               onClick={handleSave}
               isLoading={isSaving}
@@ -133,8 +178,8 @@ export default function Geofence() {
                 </>
               )}
             </ActionButton>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Banner somente leitura */}
@@ -197,6 +242,17 @@ export default function Geofence() {
           </ul>
         </div>
       </div>
+
+      {/* Modal de Código JSON */}
+      <JsonConfigModal
+        isOpen={isCodeModalOpen}
+        onClose={() => setIsCodeModalOpen(false)}
+        title="Código de Configuração da Geofence (JSON)"
+        description="Visualize, copie ou cole a estrutura JSON com as configurações do perímetro e check-in."
+        data={jsonPayload}
+        onApply={handleApplyCode}
+        canWrite={canWrite}
+      />
     </div>
   );
 }

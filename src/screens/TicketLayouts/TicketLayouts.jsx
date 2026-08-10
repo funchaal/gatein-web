@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useGetTicketLayoutsQuery, useUpsertTicketLayoutMutation, useDeleteTicketLayoutMutation, useGetLayoutsQuery } from "../../services/api";
 import { Eye, Code, Database } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import LoadingState from "@/components/LoadingState";
 
@@ -80,9 +81,8 @@ function HeaderEditor({ apptCardLayout, onChange }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Rótulo (Primário)</label>
-          <input 
+          <Input 
             type="text" 
-            className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500" 
             value={apptCardLayout?.header?.label || ""} 
             onChange={e => handleChange("header", "label", e.target.value)} 
             placeholder="Ex: Motorista"
@@ -90,9 +90,8 @@ function HeaderEditor({ apptCardLayout, onChange }) {
         </div>
         <div>
           <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Valor (Preview)</label>
-          <input 
+          <Input 
             type="text" 
-            className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500" 
             value={apptCardLayout?.header?.preview_value || ""} 
             onChange={e => handleChange("header", "preview_value", e.target.value)} 
             placeholder="Ex: Carlos Silva"
@@ -103,9 +102,8 @@ function HeaderEditor({ apptCardLayout, onChange }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Rótulo (Secundário)</label>
-          <input 
+          <Input 
             type="text" 
-            className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500" 
             value={apptCardLayout?.sub_header?.label || ""} 
             onChange={e => handleChange("sub_header", "label", e.target.value)} 
             placeholder="Ex: Placa"
@@ -113,9 +111,8 @@ function HeaderEditor({ apptCardLayout, onChange }) {
         </div>
         <div>
           <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Valor (Preview)</label>
-          <input 
+          <Input 
             type="text" 
-            className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500" 
             value={apptCardLayout?.sub_header?.preview_value || ""} 
             onChange={e => handleChange("sub_header", "preview_value", e.target.value)} 
             placeholder="Ex: ABC-1234"
@@ -481,6 +478,22 @@ export default function TicketLayouts() {
   };
 
   const handleJsonChange = (parsed) => {
+    if (!parsed) return;
+
+    if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+      if (parsed.layout_ref !== undefined) {
+        setSaveRef(parsed.layout_ref);
+      } else if (parsed.ref !== undefined) {
+        setSaveRef(parsed.ref);
+      }
+
+      if (parsed.layout_title !== undefined) {
+        setSaveTitle(parsed.layout_title);
+      } else if (parsed.title !== undefined) {
+        setSaveTitle(parsed.title);
+      }
+    }
+
     // If it's the old array format
     if (Array.isArray(parsed)) {
       setLayout(
@@ -526,6 +539,20 @@ export default function TicketLayouts() {
     }
   };
 
+  const tabJsonObj = useMemo(() => {
+    const obj = {
+      layout_ref: saveRef,
+      layout_title: saveTitle,
+      elements: cleanLayoutData(layout),
+    };
+    if (apptCardLayoutCustom) {
+      obj.appt_card_layout = apptCardLayoutCustom;
+    }
+    return obj;
+  }, [saveRef, saveTitle, layout, apptCardLayoutCustom]);
+
+  const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
+
   if (loadingLayouts) {
     return <div className="mt-20"><LoadingState text="Carregando layouts..." /></div>;
   }
@@ -544,8 +571,6 @@ export default function TicketLayouts() {
       />
     );
   }
-
-  const jsonStr = JSON.stringify(cleanLayout(), null, 2);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">

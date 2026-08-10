@@ -13,8 +13,11 @@ const CompanyInfo = lazy(() => import('../screens/CompanyInfo/CompanyInfo'));
 const Users = lazy(() => import('../screens/admin/Users/Users'));
 const ApiKey = lazy(() => import('../screens/admin/ApiKey/ApiKey'));
 const StagingPassword = lazy(() => import('../screens/admin/StagingPassword/StagingPassword'));
+const CreateFakeDriver = lazy(() => import('../screens/admin/CreateFakeDriver/CreateFakeDriver'));
 const CompanyServices = lazy(() => import('../screens/CompanyServices/CompanyServices'));
 const Announcements = lazy(() => import('../screens/Announcements/Announcements'));
+const SubmissionTypes = lazy(() => import('../screens/SubmissionTypes/SubmissionTypes'));
+const Submissions = lazy(() => import('../screens/Submissions/Submissions'));
 const NotFound = lazy(() => import('../screens/NotFound/NotFound'));
 
 const routes = createBrowserRouter([
@@ -93,6 +96,26 @@ const routes = createBrowserRouter([
         ),
       },
       {
+        path: 'submission-types',
+        element: (
+          <ProtectedRoute module="submissions">
+            <Suspense fallback={<LoadingState text="Carregando..." />}>
+              <SubmissionTypes />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'submissions',
+        element: (
+          <ProtectedRoute module="submissions">
+            <Suspense fallback={<LoadingState text="Carregando..." />}>
+              <Submissions />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'users',
         element: (
           <ProtectedRoute requireAdmin={true}>
@@ -118,6 +141,16 @@ const routes = createBrowserRouter([
           <ProtectedRoute requireAdmin={true}>
             <Suspense fallback={<LoadingState text="Carregando..." />}>
               <StagingPassword />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'create-fake-driver',
+        element: (
+          <ProtectedRoute requireAdmin={true}>
+            <Suspense fallback={<LoadingState text="Carregando..." />}>
+              <CreateFakeDriver />
             </Suspense>
           </ProtectedRoute>
         ),

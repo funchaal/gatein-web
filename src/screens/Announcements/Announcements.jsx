@@ -292,12 +292,12 @@ export default function Announcements() {
                 </CardDescription>
               </div>
               <div className="relative w-72">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                 <Input
                   placeholder="Buscar por título..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212] focus:border-orange-500 dark:focus:border-orange-500 focus:ring-0 focus-visible:ring-0 shadow-none focus:shadow-none focus-visible:shadow-none"
+                  className="pl-10"
                 />
               </div>
             </div>
@@ -524,7 +524,6 @@ export default function Announcements() {
                     placeholder="Insira um link para redirecionamento ao clicar (ex: site, regulamento...)"
                     value={formData.url || ''}
                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                    className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212]"
                   />
                 </div>
 
@@ -557,7 +556,7 @@ export default function Announcements() {
                       value={formData.is_active ? '' : formData.start_at}
                       disabled={formData.is_active}
                       onChange={(e) => setFormData({ ...formData, start_at: e.target.value })}
-                      className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212] disabled:opacity-40 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:invert"
+                      className="[&::-webkit-calendar-picker-indicator]:invert"
                     />
                   </div>
 
@@ -570,7 +569,7 @@ export default function Announcements() {
                       type="datetime-local"
                       value={formData.end_at}
                       onChange={(e) => setFormData({ ...formData, end_at: e.target.value })}
-                      className="border-gray-300 dark:border-gray-800 bg-white dark:bg-[#121212] [&::-webkit-calendar-picker-indicator]:invert"
+                      className="[&::-webkit-calendar-picker-indicator]:invert"
                     />
                   </div>
                 </div>

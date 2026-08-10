@@ -4,15 +4,18 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { cn } from "@/lib/utils";
 import * as React from "react";
 
-function Input({
-  className,
-  type,
-  onKeyDown,
-  onCompositionStart,
-  onCompositionEnd,
-  disabledHoverMessage,
-  ...props
-}) {
+const Input = React.forwardRef(function Input(
+  {
+    className,
+    type,
+    onKeyDown,
+    onCompositionStart,
+    onCompositionEnd,
+    disabledHoverMessage,
+    ...props
+  },
+  ref
+) {
   // Get dialog composition context if available (will be no-op if not inside Dialog)
   const dialogComposition = useDialogComposition();
 
@@ -55,12 +58,13 @@ function Input({
 
   const inputEl = (
     <input
+      ref={ref}
       type={type}
       data-slot="input"
       className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-gray-200 dark:border-transparent h-10 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-not-allowed disabled:opacity-50 md:text-sm shadow-none focus:shadow-none focus-visible:shadow-none focus-visible:ring-0",
+        "h-10 w-full min-w-0 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent dark:bg-input/30 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors outline-none shadow-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-not-allowed disabled:opacity-50",
         !props.disabled && "focus:border-[#F97316] focus-visible:border-[#F97316] dark:focus:border-[#F97316] dark:focus-visible:border-[#F97316]",
-        "aria-invalid:border-destructive",
+        "aria-invalid:border-red-500",
         hasTooltip && "pointer-events-none",
         className
       )}
@@ -89,7 +93,7 @@ function Input({
   }
 
   return inputEl;
-}
+});
 
 export { Input };
 

@@ -29,7 +29,7 @@ export default function LayoutList({
           </div>
         </div>
         <ActionButton onClick={handleCreateNew}>
-          <Plus className="w-4 h-4 mr-2" /> Novo Layout de Ticket
+          <Plus className="w-4 h-4 mr-2" /> Novo Layout
         </ActionButton>
       </div>
 
@@ -38,7 +38,7 @@ export default function LayoutList({
           <div className="flex flex-col gap-3">
             {layouts.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-none rounded-xl bg-gray-50/50 dark:bg-[#1B1B1B]">
-                Nenhum layout de ticket encontrado. Clique em "Novo Layout de Ticket" para começar.
+                Nenhum layout de ticket encontrado. Clique em "Novo Layout" para começar.
               </div>
             ) : (
               layouts.map((l) => (

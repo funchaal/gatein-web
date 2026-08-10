@@ -85,13 +85,13 @@ export default function UserModal({
             <div className="space-y-2">
               <Label htmlFor="name" className="text-xs font-medium text-gray-700 dark:text-gray-300">Nome Completo</Label>
               <div className="relative">
-                <User className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                <User className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                 <Input
                   id="name" name="name" type="text"
                   value={formData.name}
                   onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                   placeholder="Ex: João Silva"
-                  className="pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                  className="pl-10"
                   required
                 />
               </div>
@@ -101,7 +101,7 @@ export default function UserModal({
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-xs font-medium text-gray-700 dark:text-gray-300">Usuário (login)</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                   <Input
                     id="username" name="username" type="text"
                     value={formData.username}
@@ -110,7 +110,8 @@ export default function UserModal({
                       if (setUsernameError) setUsernameError('');
                     }}
                     placeholder="user@example.com"
-                    className={`pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500 ${isUsernameTaken ? 'border-red-500 focus:border-red-500' : ''}`}
+                    aria-invalid={isUsernameTaken}
+                    className="pl-10"
                     required
                   />
                 </div>
@@ -140,13 +141,13 @@ export default function UserModal({
                   Senha {editingUser && <span className="text-gray-400">(vazio = manter)</span>}
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
                   <Input
                     id="password" name="password" type="password"
                     value={formData.password}
                     onChange={(e) => setFormData((p) => ({ ...p, password: e.target.value }))}
                     placeholder={editingUser ? '••••••••' : 'Mínimo 8 caracteres'}
-                    className="pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                    className="pl-10"
                     required={!editingUser}
                   />
                 </div>
