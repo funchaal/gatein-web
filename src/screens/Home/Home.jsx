@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetCompanyInfoQuery } from '@/services/api';
 import {
-  Users, MapPin, Layout, Building, Settings, Key, Ticket
+  Users, MapPin, Layout, Building, Settings, Key, Ticket, Send, Inbox
 } from 'lucide-react';
 import { usePermissions } from '@/hooks/usePermissions';
 import { colors } from '@/constants/colors';
@@ -45,6 +45,22 @@ export default function Home() {
       icon: MapPin,
       path: '/geofence',
       permission: 'geofence',
+    },
+    {
+      id: 'submission-types',
+      title: 'Configurações de Envios',
+      description: 'Configure os tipos e modelos de formulários de envio de documentos',
+      icon: Send,
+      path: '/submission-types',
+      permission: 'submissions',
+    },
+    {
+      id: 'submissions',
+      title: 'Envios Recebidos',
+      description: 'Consulte e gerencie os comprovantes e documentos recebidos',
+      icon: Inbox,
+      path: '/submissions',
+      permission: 'submissions',
     },
     {
       id: 'company',

@@ -181,11 +181,11 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <div className="mb-5 space-y-2">
-              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-700">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 dark:text-slate-400 pointer-events-none" />
                 <Input
                   type="text"
                   name="username"
@@ -193,18 +193,18 @@ export default function LoginPage() {
                   onChange={handleChange}
                   placeholder="user@example.com"
                   required
-                  className="pl-10 h-11"
+                  className="pl-10 h-11 bg-white dark:bg-white text-slate-900 dark:text-slate-900 border-slate-300 dark:border-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-[#F97316] focus-visible:ring-[#F97316] shadow-sm"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div className="mb-6 space-y-2">
-              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-700">
                 Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 dark:text-slate-400 pointer-events-none" />
                 <Input
                   type="password"
                   name="password"
@@ -213,7 +213,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   aria-invalid={Boolean(passwordError)}
-                  className="pl-10 h-11"
+                  className="pl-10 h-11 bg-white dark:bg-white text-slate-900 dark:text-slate-900 border-slate-300 dark:border-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-[#F97316] focus-visible:ring-[#F97316] shadow-sm"
                 />
               </div>
               {passwordError && (
