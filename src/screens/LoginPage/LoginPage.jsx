@@ -193,7 +193,7 @@ export default function LoginPage() {
                   onChange={handleChange}
                   placeholder="user@example.com"
                   required
-                  className="pl-10 h-11 bg-white dark:bg-white text-slate-900 dark:text-slate-900 border-slate-300 dark:border-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-[#F97316] focus-visible:ring-[#F97316] shadow-sm"
+                  className="pl-10 h-11 bg-slate-100 dark:bg-slate-100 text-slate-900 dark:text-slate-900 border-none shadow-none placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-transparent focus-visible:ring-0"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   aria-invalid={Boolean(passwordError)}
-                  className="pl-10 h-11 bg-white dark:bg-white text-slate-900 dark:text-slate-900 border-slate-300 dark:border-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-[#F97316] focus-visible:ring-[#F97316] shadow-sm"
+                  className="pl-10 h-11 bg-slate-100 dark:bg-slate-100 text-slate-900 dark:text-slate-900 border-none shadow-none placeholder:text-slate-400 dark:placeholder:text-slate-400 focus:border-transparent focus-visible:ring-0"
                 />
               </div>
               {passwordError && (
