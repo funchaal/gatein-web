@@ -231,6 +231,11 @@ export default function Submissions() {
                     <p className="text-xs text-gray-500 mt-1">
                       Enviado em {formatDate(detailData.created_at)}
                     </p>
+                    {detailData.edited_at && (
+                      <p className="text-xs text-amber-600 font-medium italic mt-0.5">
+                        Editado em {formatDate(detailData.edited_at)}
+                      </p>
+                    )}
                   </div>
                   <button
                     onClick={() => setSelectedSubmissionId(null)}
