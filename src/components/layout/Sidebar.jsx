@@ -57,8 +57,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, showUserMenu, set
     >
       {/* Logo */}
       <div className="flex mb-7 items-center justify-between pl-6 pr-3.5 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-xl text-gray-900 dark:text-gray-100 tracking-tight">Gate<span style={{ color: colors.primary }}>In</span></span>
+        <div className="flex items-center gap-2.5">
+          <img src="/icon.png" alt="GateIn" className="w-8 h-8 rounded-lg shadow-sm object-cover" />
+          <span className="font-bold text-2xl text-gray-900 dark:text-white tracking-tight">GateIn</span>
         </div>
         <button
           onClick={() => setSidebarOpen(false)}

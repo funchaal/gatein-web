@@ -4,21 +4,20 @@ import { colors } from '@/constants/colors';
 
 export default function LoadingState({ text = 'Carregando...', className, fullScreen = false }) {
   const content = (
-    <div className={cn("flex flex-col items-center justify-center w-full p-8 text-gray-800 dark:text-white", className)}>
+    <div className={cn("flex flex-col items-center justify-center w-full p-8 text-white", className)}>
       <Loader2 
-        className="w-8 h-8 animate-spin mb-3" 
-        style={{ color: colors.primary }} 
+        className="w-8 h-8 animate-spin mb-3 text-orange-500" 
         strokeWidth={2.5} 
       />
       {text && (
-        <p className="text-sm font-medium tracking-wide text-gray-800 dark:text-white">{text}</p>
+        <p className="text-sm font-medium tracking-wide text-white drop-shadow-sm">{text}</p>
       )}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen bg-slate-50/50 dark:bg-gray-950/50 backdrop-blur-sm flex items-center justify-center fixed inset-0 z-[100]">
+      <div className="min-h-screen bg-gray-950/60 backdrop-blur-sm flex items-center justify-center fixed inset-0 z-[100]">
         {content}
       </div>
     );

@@ -94,6 +94,9 @@ export default function LayoutPreviewPanel({
                 <div
                   style={{
                     flex: 1,
+                    paddingTop: 8,
+                    paddingLeft: 12,
+                    paddingRight: 12,
                     paddingBottom: 24,
                     overflowY: "auto",
                     background: "#FFFFFF",
@@ -137,7 +140,7 @@ export default function LayoutPreviewPanel({
                   </div>
                   <div style={{ fontSize: 12, color: "#94A3B8" }}>Hoje</div>
                 </div>
-                <div style={{ flex: 1, paddingBottom: 24, background: "#FFFFFF" }}>
+                <div style={{ flex: 1, paddingTop: 8, paddingLeft: 12, paddingRight: 12, paddingBottom: 24, background: "#FFFFFF" }}>
                   <CardPreview data={exampleData} config={cleanLayout()} />
                 </div>
 

@@ -393,16 +393,16 @@ export default function AppointmentLayouts() {
   const handleJsonChange = (parsed) => {
     if (!parsed || typeof parsed !== "object") return;
 
-    if (parsed.layout_ref !== undefined) {
-      setSaveRef(parsed.layout_ref);
-    } else if (parsed.ref !== undefined) {
+    if (parsed.ref !== undefined) {
       setSaveRef(parsed.ref);
+    } else if (parsed.layout_ref !== undefined) {
+      setSaveRef(parsed.layout_ref);
     }
 
-    if (parsed.layout_title !== undefined) {
-      setSaveTitle(parsed.layout_title);
-    } else if (parsed.title !== undefined) {
+    if (parsed.title !== undefined) {
       setSaveTitle(parsed.title);
+    } else if (parsed.layout_title !== undefined) {
+      setSaveTitle(parsed.layout_title);
     }
 
     setLayout({
@@ -462,8 +462,8 @@ export default function AppointmentLayouts() {
 
   const tabJsonObj = useMemo(() => {
     return {
-      layout_ref: saveRef,
-      layout_title: saveTitle,
+      ref: saveRef,
+      title: saveTitle,
       ...cleanLayoutData(layout),
     };
   }, [saveRef, saveTitle, layout]);
@@ -474,7 +474,7 @@ export default function AppointmentLayouts() {
 
   // Handle active fetch loading indicator
   if (loadingLayouts) {
-    return <div className="mt-20"><LoadingState text="Carregando layouts..." /></div>;
+    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando layouts..." /></div>;
   }
 
   // 1. Conditionally render Dashboard List View

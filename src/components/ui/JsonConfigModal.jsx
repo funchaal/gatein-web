@@ -96,8 +96,8 @@ export default function JsonConfigModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
-        <DialogHeader className="space-y-2">
+      <DialogContent className="sm:max-w-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-800 shadow-2xl p-6 max-h-[85vh] flex flex-col overflow-hidden">
+        <DialogHeader className="space-y-2 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
               <Code className="w-5 h-5" />
@@ -112,7 +112,7 @@ export default function JsonConfigModal({
         </DialogHeader>
 
         {/* Toolbar superior com ações */}
-        <div className="flex items-center justify-between gap-2 pt-2">
+        <div className="flex items-center justify-between gap-2 pt-2 shrink-0">
           <span className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
             Estrutura de dados (JSON)
@@ -154,14 +154,13 @@ export default function JsonConfigModal({
         </div>
 
         {/* Editor JSON */}
-        <div className="relative mt-2">
+        <div className="relative mt-2 flex-1 min-h-0 flex flex-col overflow-hidden">
           <Textarea
             value={jsonText}
             onChange={handleTextChange}
             readOnly={!canWrite}
             placeholder="Cole o código JSON aqui..."
-            rows={14}
-            className={`w-full font-mono text-xs p-4 rounded-xl leading-relaxed resize-none focus-visible:ring-1 transition-all ${
+            className={`w-full flex-1 min-h-[220px] max-h-[52vh] font-mono text-xs p-4 rounded-xl leading-relaxed resize-none focus-visible:ring-1 transition-all overflow-y-auto ${
               validationError
                 ? 'bg-red-50/50 dark:bg-red-950/20 border-red-300 dark:border-red-800 text-red-900 dark:text-red-200 focus-visible:ring-red-500'
                 : 'bg-gray-950 text-emerald-400 border-gray-800 focus-visible:ring-indigo-500'

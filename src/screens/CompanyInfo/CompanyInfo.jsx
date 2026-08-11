@@ -75,7 +75,7 @@ export default function CompanyInfo() {
   // ---------- Loading / Error ----------
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="min-h-[60vh] flex items-center justify-center w-full">
         <LoadingState text="Carregando dados da empresa..." />
       </div>
     );

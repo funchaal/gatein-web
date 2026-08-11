@@ -481,16 +481,16 @@ export default function TicketLayouts() {
     if (!parsed) return;
 
     if (typeof parsed === 'object' && !Array.isArray(parsed)) {
-      if (parsed.layout_ref !== undefined) {
-        setSaveRef(parsed.layout_ref);
-      } else if (parsed.ref !== undefined) {
+      if (parsed.ref !== undefined) {
         setSaveRef(parsed.ref);
+      } else if (parsed.layout_ref !== undefined) {
+        setSaveRef(parsed.layout_ref);
       }
 
-      if (parsed.layout_title !== undefined) {
-        setSaveTitle(parsed.layout_title);
-      } else if (parsed.title !== undefined) {
+      if (parsed.title !== undefined) {
         setSaveTitle(parsed.title);
+      } else if (parsed.layout_title !== undefined) {
+        setSaveTitle(parsed.layout_title);
       }
     }
 
@@ -541,8 +541,8 @@ export default function TicketLayouts() {
 
   const tabJsonObj = useMemo(() => {
     const obj = {
-      layout_ref: saveRef,
-      layout_title: saveTitle,
+      ref: saveRef,
+      title: saveTitle,
       elements: cleanLayoutData(layout),
     };
     if (apptCardLayoutCustom) {
@@ -554,7 +554,7 @@ export default function TicketLayouts() {
   const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
 
   if (loadingLayouts) {
-    return <div className="mt-20"><LoadingState text="Carregando layouts..." /></div>;
+    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando layouts..." /></div>;
   }
 
   if (viewMode === "list") {

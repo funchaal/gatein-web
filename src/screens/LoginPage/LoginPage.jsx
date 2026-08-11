@@ -103,16 +103,18 @@ export default function LoginPage() {
 
         {/* Brand Content */}
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '400px' }}>
-          <h1 style={{
-            fontSize: '56px',
-            fontWeight: '800',
-            color: '#fff',
-            letterSpacing: '-0.03em',
-            lineHeight: 1.1,
-            marginBottom: '16px',
-          }}>
-            Gate<span style={{ opacity: 0.7 }}>In</span>
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+            <img src="/icon.png" alt="GateIn" style={{ width: '52px', height: '52px', borderRadius: '14px', boxShadow: '0 4px 14px rgba(0,0,0,0.2)' }} />
+            <h1 style={{
+              fontSize: '52px',
+              fontWeight: '800',
+              color: '#fff',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+            }}>
+              Gate<span style={{ opacity: 0.75 }}>In</span>
+            </h1>
+          </div>
           <p style={{
             fontSize: '18px',
             color: 'rgba(255,255,255,0.75)',

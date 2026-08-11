@@ -255,7 +255,7 @@ export default function SubmissionTypes() {
   };
 
   if (isLoading) {
-    return <LoadingState text="Carregando tipos de envio..." />;
+    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando tipos de envio..." /></div>;
   }
 
   // --- LIST VIEW ---
@@ -394,42 +394,62 @@ export default function SubmissionTypes() {
 
   // --- EDITOR VIEW ---
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-16">
+    <div className="max-w-7xl mx-auto space-y-6 pb-16">
       {/* Editor Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-4">
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={() => setViewMode("list")}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-          </Button>
+          </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {isEditing ? `Editar: ${formState.title}` : "Novo Tipo de Envio"}
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              {isEditing ? "Editar Tipo de Envio" : "Criar Novo Tipo de Envio"}
             </h1>
-            <p className="text-xs text-gray-500">Configure os campos e regras de anexo para este tipo de envio</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isEditing ? "Atualize as informações e campos do tipo de envio selecionado" : "Configure as informações, campos e regras de anexo para este novo tipo de envio"}
+            </p>
           </div>
         </div>
 
-        <ActionButton
-          onClick={handleSave}
-          disabled={isSaving || !validation.isValid}
-          isLoading={isSaving}
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {isSaving ? "Salvando..." : "Salvar Configuração"}
-        </ActionButton>
+        <div className="flex items-center gap-3">
+          {isEditing && (
+            <Button
+              variant="destructive"
+              onClick={() => setDeletePrompt({ ref: originalRef, title: formState.title })}
+              disabled={isSaving}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Excluir Tipo
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => setViewMode("list")}
+            disabled={isSaving}
+          >
+            Cancelar
+          </Button>
+          <ActionButton
+            onClick={handleSave}
+            disabled={isSaving || !validation.isValid}
+            isLoading={isSaving}
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isSaving ? "Salvando..." : "Salvar Tipo de Envio"}
+          </ActionButton>
+        </div>
       </div>
 
       {/* Rule validation alert */}
       {!validation.hasAtLeastOneRequired && (
-        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-center gap-3 text-amber-800 dark:text-amber-200 text-sm">
-          <ShieldAlert className="w-5 h-5 flex-shrink-0 text-amber-600" />
-          <div>
-            <strong>Regra de validação:</strong> É necessário ter ao menos <strong>um campo obrigatório</strong> ou selecionar <strong>anexo obrigatório</strong> para que este tipo possa ser salvo.
-          </div>
+        <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-lg p-2.5 px-3.5 flex items-center gap-2.5 text-amber-700 dark:text-amber-400 text-xs">
+          <ShieldAlert className="w-4 h-4 flex-shrink-0 text-amber-500" />
+          <span>
+            <strong className="font-semibold">Regra de validação:</strong> É necessário ter ao menos um campo obrigatório ou selecionar anexo obrigatório para salvar.
+          </span>
         </div>
       )}
 
@@ -647,7 +667,7 @@ export default function SubmissionTypes() {
                       <select
                         value={field.type}
                         onChange={(e) => updateFieldRow(field.id, "type", e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md bg-background text-xs"
+                        className="w-full h-10 px-3 py-2 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100 focus:border-orange-500 outline-none transition-colors"
                       >
                         <option value="text">Texto livre</option>
                         <option value="number">Apenas números</option>
