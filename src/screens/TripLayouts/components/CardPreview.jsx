@@ -15,7 +15,7 @@ import { CardHeaderElement, CardRowElement } from "./CardComponents";
  */
 export function CardPreview({ data, config }) {
   const status = data?.status || "Programado";
-  const statusColor = resolveStatusColor(status, config?.card_layout?.status_tags);
+  const statusColor = resolveStatusColor(status);
   const displayTime = formatDate(get(data, "schedule.start_time") || data?.window_start);
 
   const { header, sub_header, body_rows } = config?.card_layout || {};
@@ -25,8 +25,7 @@ export function CardPreview({ data, config }) {
   const visibleBodyRows = (body_rows && body_rows.length > 0)
     ? body_rows.filter(row => {
         if (row.field === "origin_city" || row.field === "destination_city") return false;
-        const val = row.field ? get(data, row.field) : null;
-        return !!val;
+        return row.field && row.field.trim() !== "";
       })
     : [];
 

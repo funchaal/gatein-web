@@ -5,13 +5,7 @@ export function getStatusColor(status = "") {
   return STATUS_COLORS[key] || "#6B7280";
 }
 
-export function resolveStatusColor(status = "", statusTags = []) {
-  if (statusTags && statusTags.length > 0) {
-    const matchedTag = statusTags.find(t => t.value && t.value.toLowerCase() === status.toLowerCase());
-    if (matchedTag && ALERT_COLORS[matchedTag.color]) {
-      return ALERT_COLORS[matchedTag.color].text;
-    }
-  }
+export function resolveStatusColor(status = "") {
   return getStatusColor(status);
 }
 

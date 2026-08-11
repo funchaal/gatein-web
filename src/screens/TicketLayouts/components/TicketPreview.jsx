@@ -23,7 +23,7 @@ function TicketIcon({ name, className, size = 16, style }) {
   return <IconComp className={className} size={size} style={style} />;
 }
 
-export default function TicketPreview({ data, config, apptCardLayout }) {
+export default function TicketPreview({ data, config }) {
   const displayId = data?.ref || "—";
   const displayTime = data?.window_start || data?.created_at
     ? formatDate(data?.window_start || data?.created_at, true)
@@ -33,13 +33,6 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
     ? formatDate(data.created_at, true)
     : "25 de junho de 2026 14:30";
   const layout = config || [];
-
-  // Ticket header resolved dynamically from the active appointment layout card config
-  const header = apptCardLayout?.header;
-  const sub_header = apptCardLayout?.sub_header;
-
-  const headerValue = header?.preview_value !== undefined && header?.preview_value !== "" ? header.preview_value : (header?.field ? (get(data, header.field) || data[header.field] || `[${header.field}]`) : null);
-  const subHeaderValue = sub_header?.preview_value !== undefined && sub_header?.preview_value !== "" ? sub_header.preview_value : (sub_header?.field ? (get(data, sub_header.field) || data[sub_header.field] || `[${sub_header.field}]`) : null);
 
   return (
     <div className="bg-white text-slate-800 rounded-[36px] overflow-hidden flex flex-col h-full select-none"
@@ -335,22 +328,16 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
         </div>
 
         {/* Hero Section / renderCardHeader */}
-        {apptCardLayout && (headerValue || subHeaderValue) && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", paddingVertical: "20px", paddingTop: "8px", backgroundColor: "#ffffff", gap: "10px" }}>
-            {headerValue && (
-              <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
-                {header.label && <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>{header.label}</span>}
-                <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#0F172A", lineHeight: "1.25" }}>{headerValue}</h1>
-              </div>
-            )}
-            {subHeaderValue && (
-              <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
-                {sub_header.label && <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>{sub_header.label}</span>}
-                <h2 style={{ fontSize: "20px", fontWeight: "500", color: "#475569", lineHeight: "1.25" }}>{subHeaderValue}</h2>
-              </div>
-            )}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", paddingVertical: "20px", paddingTop: "8px", backgroundColor: "#ffffff", gap: "10px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
+            <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>Header</span>
+            <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#0F172A", lineHeight: "1.25" }}>[Herdado do agendamento]</h1>
           </div>
-        )}
+          <div style={{ display: "flex", flexDirection: "column", alignSelf: "stretch", gap: "0" }}>
+            <span style={{ fontSize: "16px", color: "#94A3B8", width: "110px", fontWeight: "500" }}>Sub-header</span>
+            <h2 style={{ fontSize: "20px", fontWeight: "500", color: "#475569", lineHeight: "1.25" }}>[Herdado do agendamento]</h2>
+          </div>
+        </div>
 
         {/* Time Container */}
         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", marginBottom: "15px", marginTop: "16px", borderRadius: "12px" }}>
@@ -388,30 +375,34 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Section
             if (el.element === "section") {
+              const fieldsToRender = (el.fields || []).map((f, fIdx) => {
+                if (!f.field || !f.field.trim()) return null;
+                const val = get(data, f.field) || data?.[f.field] || `[${f.field}]`;
+                return (
+                  <div key={`sec-field-${fIdx}`} className="field-row">
+                    <span className="field-label">{f.label || f.field}</span>
+                    <span className="field-value">{val}</span>
+                  </div>
+                );
+              }).filter(Boolean);
+
+              if (fieldsToRender.length === 0 && !el.title) return null;
+
               return (
                 <div key={i} className="section-wrapper">
-                  <div className="section-title">{el.title || "Seção"}</div>
-                  {(el.fields || []).map((f, fIdx) => {
-                    const val = get(data, f.field) || data[f.field];
-                    if (!val) return null;
-                    return (
-                      <div key={`sec-field-${fIdx}`} className="field-row">
-                        <span className="field-label">{f.label}</span>
-                        <span className="field-value">{val}</span>
-                      </div>
-                    );
-                  })}
+                  {el.title && <div className="section-title">{el.title}</div>}
+                  {fieldsToRender}
                 </div>
               );
             }
 
             // Render Field
             if (el.element === "field") {
-              const val = get(data, el.field) || data[el.field];
-              if (!val) return null;
+              if (!el.field || !el.field.trim()) return null;
+              const val = get(data, el.field) || data?.[el.field] || `[${el.field}]`;
               return (
                 <div key={i} className="field-row">
-                  <span className="field-label">{el.label}</span>
+                  <span className="field-label">{el.label || el.field}</span>
                   <span className="field-value">{val}</span>
                 </div>
               );
@@ -419,8 +410,14 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Text
             if (el.element === "text") {
-              const val = el.useField ? (get(data, el.field) || data[el.field]) : el.text;
-              if (!val) return null;
+              let val = null;
+              if (el.useField) {
+                if (!el.field || !el.field.trim()) return null;
+                val = get(data, el.field) || data?.[el.field] || `[${el.field}]`;
+              } else {
+                val = el.text;
+                if (!val || !val.trim()) return null;
+              }
 
               const fontSize = el.size === "sm" ? 13 : el.size === "md" ? 15 : el.size === "lg" ? 18 : 14;
               const fontWeight = el.weight === "bold" ? "700" : el.weight === "medium" ? "500" : "400";
@@ -439,8 +436,14 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Attention Box
             if (el.element === "attention") {
-              const val = el.useField ? (get(data, el.field) || data[el.field]) : el.message;
-              if (!val) return null;
+              let val = null;
+              if (el.useField !== false && (el.useField || el.field)) {
+                if (!el.field || !el.field.trim()) return null;
+                val = get(data, el.field) || data?.[el.field] || `[${el.field}]`;
+              } else {
+                val = el.message;
+                if (!val || !val.trim()) return null;
+              }
 
               const colorKey = el.color || "orange";
               const colorscheme = ATTENTION_COLORS[colorKey] || ATTENTION_COLORS.orange;
@@ -461,7 +464,7 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Instruction List
             if (el.element === "instruction") {
-              const steps = el.steps || [];
+              const steps = (el.steps || []).filter(step => step && step.trim());
               if (steps.length === 0) return null;
               return (
                 <div key={i} className="instruction-wrapper">
@@ -484,23 +487,33 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Tag Container
             if (el.element === "tag_container") {
-              const tags = el.tags || [];
-              if (tags.length === 0) return null;
+              const tagsToRender = (el.tags || []).map((tag, tagIdx) => {
+                let tagText = tag.label;
+                if (!tagText || !tagText.trim()) {
+                  if (tag.field && tag.field.trim()) {
+                    tagText = get(data, tag.field) || data?.[tag.field] || `[${tag.field}]`;
+                  } else {
+                    return null;
+                  }
+                }
+                const col = TAG_COLORS[tag.color] || TAG_COLORS.gray;
+                return (
+                  <span key={tagIdx} className="tag" style={{ backgroundColor: col.bg }}>
+                    {tag.icon && <TicketIcon name={tag.icon} size={15} style={{ color: col.text, marginRight: "4px" }} className="shrink-0" />}
+                    <span className="tag-text" style={{ color: col.text }}>
+                      {tagText.toUpperCase()}
+                    </span>
+                  </span>
+                );
+              }).filter(Boolean);
+
+              if (tagsToRender.length === 0) return null;
+
               return (
                 <div key={i} className="tag-container">
                   {el.label && <div className="tag-container-label">{el.label}</div>}
                   <div className="tag-row">
-                    {tags.map((tag, tagIdx) => {
-                      const col = TAG_COLORS[tag.color] || TAG_COLORS.gray;
-                      return (
-                        <span key={tagIdx} className="tag" style={{ backgroundColor: col.bg }}>
-                          {tag.icon && <TicketIcon name={tag.icon} size={15} style={{ color: col.text, marginRight: "4px" }} className="shrink-0" />}
-                          <span className="tag-text" style={{ color: col.text }}>
-                            {tag.label ? tag.label.toUpperCase() : ''}
-                          </span>
-                        </span>
-                      );
-                    })}
+                    {tagsToRender}
                   </div>
                 </div>
               );
@@ -508,23 +521,32 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
 
             // Render Highlight Grid
             if (el.element === "highlight_grid") {
-              const items = el.items || [];
-              if (items.length === 0) return null;
+              const itemsToRender = (el.items || []).map((item, itemIdx) => {
+                let val = null;
+                if (item.useField) {
+                  if (!item.field || !item.field.trim()) return null;
+                  val = get(data, item.field) || data?.[item.field] || `[${item.field}]`;
+                } else {
+                  val = item.value;
+                  if (!val || !val.trim()) return null;
+                }
+                const col = HIGHLIGHT_COLORS[item.color] || HIGHLIGHT_COLORS.slate;
+                return (
+                  <div key={itemIdx} className="highlight-box" style={{ backgroundColor: col.bg, borderColor: col.bg }}>
+                    {item.label && <span className="highlight-label" style={{ color: col.text }}>{item.label}</span>}
+                    <span className="highlight-value" style={{ color: col.text }}>{val}</span>
+                    {item.caption && <span className="highlight-caption" style={{ color: col.text }}>{item.caption}</span>}
+                  </div>
+                );
+              }).filter(Boolean);
+
+              if (itemsToRender.length === 0) return null;
+
               return (
                 <div key={i} className="grid-wrapper">
                   {el.label && <div className="section-title" style={{ marginBottom: "12px" }}>{el.label}</div>}
                   <div className="grid">
-                    {items.map((item, itemIdx) => {
-                      const val = item.useField ? (get(data, item.field) || data[item.field]) : item.value;
-                      const col = HIGHLIGHT_COLORS[item.color] || HIGHLIGHT_COLORS.slate;
-                      return (
-                        <div key={itemIdx} className="highlight-box" style={{ backgroundColor: col.bg, borderColor: col.bg }}>
-                          {item.label && <span className="highlight-label" style={{ color: col.text }}>{item.label}</span>}
-                          <span className="highlight-value" style={{ color: col.text }}>{val}</span>
-                          {item.caption && <span className="highlight-caption" style={{ color: col.text }}>{item.caption}</span>}
-                        </div>
-                      );
-                    })}
+                    {itemsToRender}
                   </div>
                 </div>
               );

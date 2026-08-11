@@ -15,14 +15,16 @@ export function ModalSectionElement({ title, fields, data }) {
     title: { fontSize: 14, fontWeight: 700, color: THEME.slate900, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }
   };
 
+  const fieldsToRender = (fields || []).map((f, i) => (
+    <ModalFieldElement key={i} label={f.label} field={f.field} data={data} />
+  )).filter(Boolean);
+
+  if (fieldsToRender.length === 0 && !title) return null;
+
   return (
     <div style={styles.container}>
-      <div style={styles.title}>
-        {title || "Seção"}
-      </div>
-      {(fields || []).map((f, i) => (
-        <ModalFieldElement key={i} label={f.label} field={f.field} data={data} />
-      ))}
+      {title && <div style={styles.title}>{title}</div>}
+      {fieldsToRender}
     </div>
   );
 }
@@ -34,17 +36,13 @@ export function ModalFieldElement({ label, field, data }) {
     value: { fontSize: 16, color: '#334155', fontWeight: 600, flex: 1, maxWidth: "50%", textAlign: "right", wordBreak: "break-word" }
   };
 
-  const value = field ? get(data, field) : null;
-  if (!value) return (
-    <div style={styles.container}>
-      <span style={styles.label}>{label}</span>
-      <span style={{...styles.value, opacity: 0.5, fontSize: 14}}>[{field || 'vazio'}]</span>
-    </div>
-  );
+  if (!field || !field.trim()) return null;
+
+  const value = get(data, field) || data?.[field] || `[${field}]`;
   
   return (
     <div style={styles.container}>
-      <span style={styles.label}>{label}</span>
+      <span style={styles.label}>{label || field}</span>
       <span style={styles.value}>{value}</span>
     </div>
   );
@@ -59,31 +57,16 @@ export function ModalAlertElement({ color, icon, title, field, useField, message
     title: { fontSize: 14, fontWeight: 700, marginBottom: 3, textTransform: "capitalize" }
   };
 
-  const value = (useField === false && message) ? message : (field ? get(data, field) : null);
-  const colorScheme = ALERT_COLORS[color] || ALERT_COLORS.gray;
-  
-  if (!value) {
-    return (
-      <div style={{ ...styles.container, backgroundColor: colorScheme.bg, borderColor: colorScheme.bg, opacity: 0.7 }}>
-        <div style={styles.content}>
-          {icon && (
-            <div style={styles.iconContainer}>
-               <IconSvg name={icon || "information"} size={20} color={colorScheme.icon || colorScheme.text} />
-            </div>
-          )}
-          <div style={styles.textContainer}>
-            {title && <div style={{ ...styles.title, color: colorScheme.text }}>{title}</div>}
-            <div style={{
-              fontSize: 14,
-              fontWeight: 500,
-              lineHeight: "18px",
-              color: colorScheme.text
-            }}>[Alerta sem valor: {field || 'campo vazio'}]</div>
-          </div>
-        </div>
-      </div>
-    );
+  let value = null;
+  if (useField === false) {
+    if (!message || !message.trim()) return null;
+    value = message;
+  } else {
+    if (!field || !field.trim()) return null;
+    value = get(data, field) || data?.[field] || `[${field}]`;
   }
+
+  const colorScheme = ALERT_COLORS[color] || ALERT_COLORS.gray;
   
   return (
     <div style={{ ...styles.container, backgroundColor: colorScheme.bg, borderColor: colorScheme.bg }}>
@@ -116,8 +99,9 @@ export function ModalQRCodeElement({ title, caption, field, data }) {
     caption: { fontSize: 13, color: THEME.slate600, marginTop: 12, textAlign: 'center', fontWeight: 500 }
   };
 
-  const value = field ? get(data, field) : null;
-  if (!value) return <div style={styles.empty}>QR: campo vazio</div>;
+  if (!field || !field.trim()) return null;
+
+  const value = get(data, field) || data?.[field] || `[${field}]`;
   
   return (
     <div style={styles.container}>

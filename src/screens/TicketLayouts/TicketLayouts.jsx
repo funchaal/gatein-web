@@ -57,72 +57,6 @@ const cleanLayoutData = (layoutArr) => {
   });
 };
 
-function HeaderEditor({ apptCardLayout, onChange }) {
-  const handleChange = (section, key, val) => {
-    const updated = {
-      ...apptCardLayout,
-      [section]: {
-        ...(apptCardLayout?.[section] || {}),
-        [key]: val
-      }
-    };
-    onChange(updated);
-  };
-
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">
-        Cabeçalho do Ticket
-      </div>
-      <div className="text-[11px] text-gray-500 bg-gray-50 dark:bg-gray-800/50 p-2.5 rounded border border-gray-200 dark:border-gray-800 mb-2 leading-relaxed">
-        <strong>Nota:</strong> Esta edição é apenas para fins de <strong>preview</strong>. O cabeçalho real do ticket virá automaticamente das informações do agendamento vinculado.
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Rótulo (Primário)</label>
-          <Input 
-            type="text" 
-            value={apptCardLayout?.header?.label || ""} 
-            onChange={e => handleChange("header", "label", e.target.value)} 
-            placeholder="Ex: Motorista"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Valor (Preview)</label>
-          <Input 
-            type="text" 
-            value={apptCardLayout?.header?.preview_value || ""} 
-            onChange={e => handleChange("header", "preview_value", e.target.value)} 
-            placeholder="Ex: Carlos Silva"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Rótulo (Secundário)</label>
-          <Input 
-            type="text" 
-            value={apptCardLayout?.sub_header?.label || ""} 
-            onChange={e => handleChange("sub_header", "label", e.target.value)} 
-            placeholder="Ex: Placa"
-          />
-        </div>
-        <div>
-          <label className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Valor (Preview)</label>
-          <Input 
-            type="text" 
-            value={apptCardLayout?.sub_header?.preview_value || ""} 
-            onChange={e => handleChange("sub_header", "preview_value", e.target.value)} 
-            placeholder="Ex: ABC-1234"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function TicketLayouts() {
   const [viewMode, setViewMode] = useState("list");
   const [layout, setLayout] = useState([]);
@@ -133,7 +67,6 @@ export default function TicketLayouts() {
   const [saveRef, setSaveRef] = useState("default");
   const [saveTitle, setSaveTitle] = useState("Layout Padrão");
   const [originalState, setOriginalState] = useState(null);
-  const [apptCardLayoutCustom, setApptCardLayoutCustom] = useState(null);
 
   // Deletion modals state handling
   const [deletePrompt, setDeletePrompt] = useState(null);
@@ -141,49 +74,18 @@ export default function TicketLayouts() {
 
   // Sync with backend API via RTK Query
   const { data: layoutsRes, isLoading: loadingLayouts } = useGetTicketLayoutsQuery();
-  const { data: apptLayoutsRes } = useGetLayoutsQuery();
   const layouts = useMemo(() => layoutsRes || [], [layoutsRes]);
   const [upsertTicketLayout] = useUpsertTicketLayoutMutation();
   const [deleteTicketLayout] = useDeleteTicketLayoutMutation();
-
-  const apptCardLayout = useMemo(() => {
-    if (apptCardLayoutCustom) return apptCardLayoutCustom;
-    const firstLayout = apptLayoutsRes?.[0]?.layout || apptLayoutsRes?.[0]?.layout_data;
-    const cardLayout = firstLayout?.card_layout;
-    if (cardLayout && Object.keys(cardLayout).length > 0) {
-      return {
-        ...cardLayout,
-        header: {
-          ...cardLayout.header,
-          preview_value: get(exampleData, cardLayout.header?.field) || cardLayout.header?.preview_value || "Motorista Exemplo"
-        },
-        sub_header: {
-          ...cardLayout.sub_header,
-          preview_value: get(exampleData, cardLayout.sub_header?.field) || cardLayout.sub_header?.preview_value || "ABC-1234"
-        }
-      };
-    }
-    return {
-      header: { field: "summary", preview_value: get(exampleData, "summary") || "TCLU2346456 20\"" },
-      body_rows: [
-        { field: "gate_assignment", label: "Gate" }
-      ],
-      sub_header: { label: "Veículo", field: "license_plate", preview_value: get(exampleData, "license_plate") || "ABC-1234" },
-      status_tags: [
-        { color: "blue", value: "SCHEDULED" }
-      ]
-    };
-  }, [apptLayoutsRes, apptCardLayoutCustom, exampleData]);
 
   const isEditing = originalState ? !originalState.isNew : false;
 
   const cleanLayout = useCallback(() => {
     return {
       elements: cleanLayoutData(layout),
-      example_data: exampleData,
-      appt_card_layout: apptCardLayoutCustom
+      example_data: exampleData
     };
-  }, [layout, exampleData, apptCardLayoutCustom]);
+  }, [layout, exampleData]);
 
   // Detect unsaved changes
   const hasChanges = useMemo(() => {
@@ -284,7 +186,6 @@ export default function TicketLayouts() {
     // Support backward compatibility if it's just an array of elements
     const layoutElements = Array.isArray(layoutDataRaw) ? layoutDataRaw : (layoutDataRaw?.elements || []);
     const savedExampleData = !Array.isArray(layoutDataRaw) && layoutDataRaw?.example_data ? layoutDataRaw.example_data : DEFAULT_EXAMPLE;
-    const savedApptCardLayout = !Array.isArray(layoutDataRaw) && layoutDataRaw?.appt_card_layout ? layoutDataRaw.appt_card_layout : null;
 
     // Map items to include local react-friendly IDs
     const loadedLayout = (layoutElements || []).map(el => {
@@ -306,19 +207,14 @@ export default function TicketLayouts() {
 
     setLayout(loadedLayout);
     setExampleData(savedExampleData);
-    if (savedApptCardLayout) {
-      setApptCardLayoutCustom(savedApptCardLayout);
-    } else {
-      setApptCardLayoutCustom(null); // Reset so it falls back to first layout
-    }
     setOriginalState({
       title: layoutItem.title || layoutItem.ref,
       ref: layoutItem.ref,
       isNew: false,
       layoutJson: JSON.stringify({
+        ref: layoutItem.ref,
+        title: layoutItem.title || layoutItem.ref,
         elements: cleanLayoutData(loadedLayout),
-        example_data: savedExampleData,
-        appt_card_layout: savedApptCardLayout
       })
     });
     setViewMode("editor");
@@ -331,39 +227,14 @@ export default function TicketLayouts() {
     setLayout(freshLayout);
     setExampleData(DEFAULT_EXAMPLE);
 
-    const defaultHeader = {
-      header: {
-        field: "summary",
-        preview_value: "TCLU2346456 20\""
-      },
-      body_rows: [
-        {
-          field: "gate_assignment",
-          label: "Gate"
-        }
-      ],
-      sub_header: {
-        field: "license_plate",
-        label: "Veículo",
-        preview_value: "ABC-1234"
-      },
-      status_tags: [
-        {
-          color: "blue",
-          value: "SCHEDULED"
-        }
-      ]
-    };
-    setApptCardLayoutCustom(defaultHeader);
-
     setOriginalState({
       title: "",
       ref: "",
       isNew: true,
       layoutJson: JSON.stringify({
+        ref: "",
+        title: "",
         elements: cleanLayoutData(freshLayout),
-        example_data: DEFAULT_EXAMPLE,
-        appt_card_layout: defaultHeader
       })
     });
     setViewMode("editor");
@@ -478,9 +349,9 @@ export default function TicketLayouts() {
   };
 
   const handleJsonChange = (parsed) => {
-    if (!parsed) return;
+    if (!parsed || typeof parsed !== 'object') return;
 
-    if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+    if (!Array.isArray(parsed)) {
       if (parsed.ref !== undefined) {
         setSaveRef(parsed.ref);
       } else if (parsed.layout_ref !== undefined) {
@@ -494,14 +365,24 @@ export default function TicketLayouts() {
       }
     }
 
-    // Support both { ref, title, layout: { elements, appt_card_layout } }
-    // and legacy { ref, title, layout_data: { elements, appt_card_layout } } formats
-    const data = (parsed && typeof parsed === 'object') ? (parsed.layout || parsed.layout_data || parsed) : parsed;
-
-    // If it's the old array format
+    let rawElements = null;
     if (Array.isArray(parsed)) {
+      rawElements = parsed;
+    } else if (Array.isArray(parsed.layout)) {
+      rawElements = parsed.layout;
+    } else if (parsed.layout && Array.isArray(parsed.layout.elements)) {
+      rawElements = parsed.layout.elements;
+    } else if (Array.isArray(parsed.elements)) {
+      rawElements = parsed.elements;
+    } else if (parsed.layout_data && Array.isArray(parsed.layout_data.elements)) {
+      rawElements = parsed.layout_data.elements;
+    } else if (Array.isArray(parsed.layout_data)) {
+      rawElements = parsed.layout_data;
+    }
+
+    if (Array.isArray(rawElements)) {
       setLayout(
-        parsed.map(el => {
+        rawElements.map(el => {
           const copy = { ...el, id: el.id || uid() };
           if (copy.element === "section" && copy.fields) {
             copy.fields = copy.fields.map(field => ({ ...field, id: field.id || uid() }));
@@ -515,45 +396,20 @@ export default function TicketLayouts() {
           return copy;
         })
       );
-    } else if (data && typeof data === 'object') {
-      // New format object (with or without layout wrapper)
-      if (data.elements && Array.isArray(data.elements)) {
-        setLayout(
-          data.elements.map(el => {
-            const copy = { ...el, id: el.id || uid() };
-            if (copy.element === "section" && copy.fields) {
-              copy.fields = copy.fields.map(field => ({ ...field, id: field.id || uid() }));
-            }
-            if (copy.element === "highlight_grid" && copy.items) {
-              copy.items = copy.items.map(item => ({ ...item, id: item.id || uid() }));
-            }
-            if (copy.element === "tag_container" && copy.tags) {
-              copy.tags = copy.tags.map(tag => ({ ...tag, id: tag.id || uid() }));
-            }
-            return copy;
-          })
-        );
-      }
-      if (data.example_data) {
-        setExampleData(data.example_data);
-      }
-      if (data.appt_card_layout !== undefined) {
-        setApptCardLayoutCustom(data.appt_card_layout);
-      }
+    }
+
+    if (parsed.example_data) {
+      setExampleData(parsed.example_data);
     }
   };
 
   const tabJsonObj = useMemo(() => {
-    const layoutData = {
-      elements: cleanLayoutData(layout),
-      ...(apptCardLayoutCustom ? { appt_card_layout: apptCardLayoutCustom } : {}),
-    };
     return {
       ref: saveRef,
       title: saveTitle,
-      layout: layoutData,
+      layout: cleanLayoutData(layout),
     };
-  }, [saveRef, saveTitle, layout, apptCardLayoutCustom]);
+  }, [saveRef, saveTitle, layout]);
 
   const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
 
@@ -644,12 +500,6 @@ export default function TicketLayouts() {
                 <div className="flex-1 flex flex-col min-h-0">
                   <ExampleDataEditor data={exampleData} onChange={setExampleData} />
                 </div>
-                <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
-                  <HeaderEditor 
-                    apptCardLayout={apptCardLayout} 
-                    onChange={setApptCardLayoutCustom} 
-                  />
-                </div>
               </div>
             )}
           </div>
@@ -659,7 +509,6 @@ export default function TicketLayouts() {
         <LayoutPreviewPanel
           exampleData={exampleData}
           layout={layout}
-          apptCardLayout={apptCardLayout}
         />
       </div>
     </div>

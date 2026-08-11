@@ -14,10 +14,6 @@ export default function CardLayoutBuilder({
   layout,
   updateHeader,
   updateSubHeader,
-  addStatusTag,
-  updateStatusTag,
-  deleteStatusTag,
-  moveStatusTag,
   addRow,
   updateRow,
   deleteRow,
@@ -86,55 +82,7 @@ export default function CardLayoutBuilder({
         </div>
       </section>
 
-      {/* --- Status Tags Section (Desabilitado temporariamente) --- */}
-      {/* <section className="space-y-3">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 h-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Tags de Status
-          </h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={addStatusTag}
-            className="h-8 text-xs font-semibold dark:text-gray-300 dark:border-gray-700 hover:text-teal-600 dark:hover:text-teal-400 hover:border-teal-200 dark:hover:border-teal-800"
-          >
-            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Tag
-          </Button>
-        </div>
-        <div className="space-y-2">
-          {(layout.card_layout.status_tags || []).map((tag, i) => (
-            <StatusTagBuilderItem
-              key={tag.id}
-              tag={tag}
-              index={i}
-              total={(layout.card_layout.status_tags || []).length}
-              onChange={updateStatusTag}
-              onDelete={deleteStatusTag}
-              onMove={moveStatusTag}
-              hasError={validation.statusTags?.[tag.id]}
-            />
-          ))}
-          {(layout.card_layout.status_tags || []).map((tag, i) => (
-            <StatusTagBuilderItem
-              key={tag.id}
-              tag={tag}
-              index={i}
-              total={(layout.card_layout.status_tags || []).length}
-              onChange={updateStatusTag}
-              onDelete={deleteStatusTag}
-              onMove={moveStatusTag}
-              hasError={validation.statusTags?.[tag.id]}
-            />
-          ))}
-          {(layout.card_layout.status_tags || []).length === 0 && (
-            <div className="text-center py-4 bg-white dark:bg-card border border-gray-200 dark:border-gray-800 border-dashed rounded-xl">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Nenhuma tag de status customizada.
-              </p>
-            </div>
-          )}
-        </div>
-      </section> */}
+
 
       {/* --- Body Rows Section --- */}
       <section className="space-y-3">

@@ -5,13 +5,7 @@ export function getStatusColor(status = "") {
   return STATUS_COLORS[key] || "#6B7280";
 }
 
-export function resolveStatusColor(status = "", statusTags = []) {
-  if (statusTags && statusTags.length > 0) {
-    const matchedTag = statusTags.find(t => t.value && t.value.toLowerCase() === status.toLowerCase());
-    if (matchedTag && ALERT_COLORS[matchedTag.color]) {
-      return ALERT_COLORS[matchedTag.color].text;
-    }
-  }
+export function resolveStatusColor(status = "") {
   return getStatusColor(status);
 }
 
@@ -63,11 +57,6 @@ export function defaultState() {
     card_layout: {
       header: { label: "Resumo", field: "summary" },
       sub_header: { label: "Viagem", field: "ref" },
-      status_tags: [
-        { id: uid(), value: "PLANNED", color: "blue", isNew: true },
-        { id: uid(), value: "IN_PROGRESS", color: "yellow", isNew: true },
-        { id: uid(), value: "COMPLETED", color: "green", isNew: true }
-      ],
       body_rows: [
         { id: uid(), label: "Placa", field: "license_plate" },
         { id: uid(), label: "Origem", field: "origin_city" },

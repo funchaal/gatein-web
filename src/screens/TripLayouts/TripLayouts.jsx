@@ -26,12 +26,6 @@ const cleanLayoutData = (layoutObj) => {
     card_layout: {
       header: layoutObj?.card_layout?.header || {},
       sub_header: layoutObj?.card_layout?.sub_header || {},
-      status_tags: (layoutObj?.card_layout?.status_tags || []).map((tag) => {
-        const copy = { ...tag };
-        delete copy.id;
-        delete copy.isNew;
-        return copy;
-      }),
       body_rows: (layoutObj?.card_layout?.body_rows || []).map((row) => {
         const copy = { ...row };
         delete copy.id;
@@ -152,7 +146,6 @@ export default function TripLayouts() {
     const errs = {
       cardRows: {},
       modalEls: {},
-      statusTags: {},
       title: !trimmedTitle,
       ref: !trimmedRef,
       titleExists,
@@ -172,11 +165,6 @@ export default function TripLayouts() {
       if (!r.field?.trim() || !r.label?.trim()) errs.cardRows[r.id] = true;
     });
 
-    // Custom status tags must map to a specific target value
-    layout.card_layout.status_tags?.forEach((t) => {
-      if (!t.value?.trim()) errs.statusTags[t.id] = true;
-    });
-
     // Detail Modal elements verification based on their structural requirements
     layout.modal_layout.forEach((el) => {
       if (el.element === "section") {
@@ -194,7 +182,7 @@ export default function TripLayouts() {
 
     // Check if there are any validation errors registered across elements
     const hasErrors = errs.title || errs.ref || errs.titleExists || errs.refExists || errs.header || errs.subHeader ||
-      Object.keys(errs.cardRows).length > 0 || Object.keys(errs.modalEls).length > 0 || Object.keys(errs.statusTags).length > 0;
+      Object.keys(errs.cardRows).length > 0 || Object.keys(errs.modalEls).length > 0;
 
     return { ...errs, isValid: !hasErrors };
   }, [saveTitle, saveRef, layout, layouts, originalState]);
@@ -214,7 +202,6 @@ export default function TripLayouts() {
       card_layout: {
         header: layoutData.card_layout?.header || {},
         sub_header: layoutData.card_layout?.sub_header || {},
-        status_tags: (layoutData.card_layout?.status_tags || []).map(t => ({ ...t, id: uid() })),
         body_rows: layoutData.card_layout?.body_rows || [],
       },
       modal_layout: (layoutData.modal_layout || []).map(m => {
@@ -303,26 +290,7 @@ export default function TripLayouts() {
   const updateSubHeader = (key, val) =>
     setLayout(l => ({ ...l, card_layout: { ...l.card_layout, sub_header: { ...l.card_layout.sub_header, [key]: val } } }));
 
-  // Status custom tags configurations
-  const addStatusTag = () =>
-    setLayout(l => ({ ...l, card_layout: { ...l.card_layout, status_tags: [...(l.card_layout.status_tags || []), { id: uid(), value: "", color: "blue", isNew: true }] } }));
-  const updateStatusTag = (i, val) =>
-    setLayout(l => ({ ...l, card_layout: { ...l.card_layout, status_tags: l.card_layout.status_tags.map((t, idx) => idx === i ? val : t) } }));
-  const deleteStatusTag = (i) =>
-    setLayout(l => ({ ...l, card_layout: { ...l.card_layout, status_tags: l.card_layout.status_tags.filter((_, idx) => idx !== i) } }));
 
-  /**
-   * Repositions status tags to rearrange order.
-   */
-  const moveStatusTag = (from, to) => {
-    if (to < 0 || to >= (layout.card_layout.status_tags || []).length) return;
-    setLayout(l => {
-      const tags = [...(l.card_layout.status_tags || [])];
-      const [item] = tags.splice(from, 1);
-      tags.splice(to, 0, item);
-      return { ...l, card_layout: { ...l.card_layout, status_tags: tags } };
-    });
-  };
 
   // Footer data rows configurations
   const addRow = () =>
@@ -393,9 +361,13 @@ export default function TripLayouts() {
   const handleJsonChange = (parsed) => {
     if (!parsed || typeof parsed !== "object") return;
 
-    // Support both { ref, title, layout: { card_layout, modal_layout } }
-    // and legacy { ref, title, layout_data: { card_layout, modal_layout } } formats
-    const data = parsed.layout || parsed.layout_data || parsed;
+    // Support direct root { ref, title, card_layout, modal_layout }
+    // as well as nested { layout: { card_layout, modal_layout } } or legacy layout_data
+    const data = (parsed.layout && (parsed.layout.card_layout || parsed.layout.modal_layout))
+      ? parsed.layout
+      : ((parsed.layout_data && (parsed.layout_data.card_layout || parsed.layout_data.modal_layout))
+        ? parsed.layout_data
+        : parsed);
 
     if (parsed.ref !== undefined) {
       setSaveRef(parsed.ref);
@@ -409,14 +381,16 @@ export default function TripLayouts() {
       setSaveTitle(parsed.layout_title);
     }
 
+    const cardLayout = data.card_layout || {};
+    const modalLayout = Array.isArray(data.modal_layout) ? data.modal_layout : (Array.isArray(data) ? data : []);
+
     setLayout({
       card_layout: {
-        header: data.card_layout?.header || {},
-        sub_header: data.card_layout?.sub_header || {},
-        status_tags: (data.card_layout?.status_tags || []).map(t => ({ ...t, id: t.id || uid() })),
-        body_rows: (data.card_layout?.body_rows || []).map(r => ({ ...r, id: r.id || uid() })),
+        header: cardLayout.header || {},
+        sub_header: cardLayout.sub_header || {},
+        body_rows: (cardLayout.body_rows || []).map(r => ({ ...r, id: r.id || uid() })),
       },
-      modal_layout: (data.modal_layout || []).map(m => {
+      modal_layout: modalLayout.map(m => {
         const copy = { ...m, id: m.id || uid() };
         if (copy.element === "section" && copy.fields) {
           copy.fields = copy.fields.map(f => ({ ...f, id: f.id || uid() }));
@@ -424,8 +398,8 @@ export default function TripLayouts() {
         return copy;
       })
     });
-    if (data.example_data) {
-      setExampleData(data.example_data);
+    if (parsed.example_data || data.example_data) {
+      setExampleData(parsed.example_data || data.example_data);
     }
   };
 
@@ -468,7 +442,7 @@ export default function TripLayouts() {
     return {
       ref: saveRef,
       title: saveTitle,
-      layout: cleanLayoutData(layout),
+      ...cleanLayoutData(layout),
     };
   }, [saveRef, saveTitle, layout]);
 
@@ -574,10 +548,6 @@ export default function TripLayouts() {
                       layout={layout}
                       updateHeader={updateHeader}
                       updateSubHeader={updateSubHeader}
-                      addStatusTag={addStatusTag}
-                      updateStatusTag={updateStatusTag}
-                      deleteStatusTag={deleteStatusTag}
-                      moveStatusTag={moveStatusTag}
                       addRow={addRow}
                       updateRow={updateRow}
                       deleteRow={deleteRow}

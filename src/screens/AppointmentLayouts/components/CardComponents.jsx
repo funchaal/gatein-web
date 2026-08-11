@@ -22,8 +22,13 @@ export function CardHeaderElement({ header, subHeader, data }) {
     subValue: { fontSize: 20, fontWeight: 500, color: THEME.slate600, wordBreak: "break-word" },
   };
 
-  const headerVal = header?.field ? get(data, header.field) : null;
-  const subHeaderVal = subHeader?.field ? get(data, subHeader.field) : null;
+  const headerVal = header?.field && header.field.trim()
+    ? (get(data, header.field) || data?.[header.field] || `[${header.field}]`)
+    : null;
+
+  const subHeaderVal = subHeader?.field && subHeader.field.trim()
+    ? (get(data, subHeader.field) || data?.[subHeader.field] || `[${subHeader.field}]`)
+    : null;
 
   return (
     <div style={styles.container}>
@@ -52,8 +57,9 @@ export function CardRowElement({ row, data }) {
     value: { fontSize: 14, color: THEME.slate900, fontWeight: 600, flex: 1, maxWidth: "50%", textAlign: "right", wordBreak: "break-word" }
   };
 
-  const val = row.field ? get(data, row.field) : null;
-  if (!val) return null;
+  if (!row?.field || !row.field.trim()) return null;
+
+  const val = get(data, row.field) || data?.[row.field] || `[${row.field}]`;
   
   return (
     <div style={styles.container}>

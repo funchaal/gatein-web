@@ -34,14 +34,18 @@ export function ModalPreview({ data, config }) {
   };
 
   const statusText = data?.status || "Desconhecido";
-  const statusColor = resolveStatusColor(statusText, config?.card_layout?.status_tags);
+  const statusColor = resolveStatusColor(statusText);
   const displayTime = formatDateExtended(get(data, "schedule.start_time") || data?.window_start) || "quarta-feira, 13 de maio às 14:30";
   const displayId = data?.ref || "";
   const { header, sub_header } = config?.card_layout || {};
   const modalLayout = config?.modal_layout || [];
 
-  const headerValue = header?.field ? get(data, header.field) : null;
-  const subHeaderValue = sub_header?.field ? get(data, sub_header.field) : null;
+  const headerValue = header?.field && header.field.trim()
+    ? (get(data, header.field) || data?.[header.field] || `[${header.field}]`)
+    : null;
+  const subHeaderValue = sub_header?.field && sub_header.field.trim()
+    ? (get(data, sub_header.field) || data?.[sub_header.field] || `[${sub_header.field}]`)
+    : null;
 
   return (
     <>

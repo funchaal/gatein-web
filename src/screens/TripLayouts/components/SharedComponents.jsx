@@ -122,6 +122,18 @@ export function LayoutJsonEditor({ jsonStr, onChange }) {
     setErr(null);
   }
 
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setText(val);
+    try {
+      const parsed = JSON.parse(val);
+      onChange(parsed);
+      setErr(null);
+    } catch {
+      // Live typing might be incomplete JSON, error will be set on blur if invalid
+    }
+  };
+
   const handleBlur = () => {
     try {
       const parsed = JSON.parse(text);
@@ -166,7 +178,7 @@ export function LayoutJsonEditor({ jsonStr, onChange }) {
       <div className="flex-1 relative flex flex-col min-h-0">
         <textarea
           value={text}
-          onChange={e => setText(e.target.value)}
+          onChange={handleChange}
           onBlur={handleBlur}
           spellCheck={false}
           className={`flex-1 overflow-auto bg-gray-900 text-gray-300 p-5 rounded-xl text-xs font-mono whitespace-pre border focus:outline-none focus:ring-1 ${err ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-gray-700"} shadow-inner leading-relaxed resize-none discrete-scrollbar`}

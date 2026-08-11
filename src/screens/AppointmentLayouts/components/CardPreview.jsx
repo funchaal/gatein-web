@@ -12,7 +12,7 @@ import { CardHeaderElement, CardRowElement } from "./CardComponents";
  */
 export function CardPreview({ data, config }) {
   const status = data?.status || "Agendado";
-  const statusColor = resolveStatusColor(status, config?.card_layout?.status_tags);
+  const statusColor = resolveStatusColor(status);
   const displayTime = formatDate(get(data, "schedule.start_time") || data?.window_start);
   const displayId = data?.ref;
 

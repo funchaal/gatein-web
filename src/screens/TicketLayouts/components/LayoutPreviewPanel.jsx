@@ -6,7 +6,6 @@ import TicketPreview from "./TicketPreview";
 export default function LayoutPreviewPanel({
   exampleData,
   layout,
-  apptCardLayout,
 }) {
   return (
     <Card className="w-full lg:flex-1 h-[750px] flex flex-col shadow-none border-gray-200 dark:border-gray-800 bg-gray-100/50 dark:bg-gray-900/50 overflow-hidden">
@@ -29,7 +28,7 @@ export default function LayoutPreviewPanel({
             Ticket de Acesso do Motorista
           </div>
           <PhoneFrame>
-            <TicketPreview data={exampleData} config={layout} apptCardLayout={apptCardLayout} />
+            <TicketPreview data={exampleData} config={layout} />
           </PhoneFrame>
         </div>
       </CardContent>
