@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useCreateFakeDriverMutation, useGetStagingPasswordStatusQuery } from '@/services/api';
 import { colors } from "@/constants/colors";
 import { IS_HOMOLOGATION_OR_DEV } from '@/constants/const';
+import LoadingState from '@/components/LoadingState';
 
 const maskCPF = (value) => {
   if (!value) return '';
@@ -32,8 +33,12 @@ const maskPhone = (value) => {
 };
 
 export default function CreateFakeDriver() {
-  const { data: statusData } = useGetStagingPasswordStatusQuery();
+  const { data: statusData, isLoading: isLoadingStatus } = useGetStagingPasswordStatusQuery();
   const [createFakeDriver, { isLoading }] = useCreateFakeDriverMutation();
+
+  if (isLoadingStatus) {
+    return <LoadingState text="Carregando..." />;
+  }
 
   const [cpf, setCpf] = useState('');
   const [name, setName] = useState('');

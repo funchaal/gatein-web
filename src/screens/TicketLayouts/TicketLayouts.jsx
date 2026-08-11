@@ -414,7 +414,7 @@ export default function TicketLayouts() {
   const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
 
   if (loadingLayouts) {
-    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando layouts..." /></div>;
+    return <LoadingState text="Carregando layouts..." />;
   }
 
   if (viewMode === "list") {

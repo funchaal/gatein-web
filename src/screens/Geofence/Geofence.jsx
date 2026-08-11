@@ -116,11 +116,7 @@ export default function Geofence() {
 
   // ---------- Loading / Error ----------
   if (isLoading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center w-full">
-        <LoadingState text="Carregando geofence..." />
-      </div>
-    );
+    return <LoadingState text="Carregando geofence..." />;
   }
 
   if (isError) {

@@ -134,6 +134,10 @@ export default function Users() {
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
+  if (isLoading) {
+    return <LoadingState text="Carregando usuários..." />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}

@@ -11,6 +11,7 @@ import {
   useDeleteApiKeyMutation,
 } from '@/services/api';
 import { colors } from "@/constants/colors";
+import LoadingState from '@/components/LoadingState';
 import ApiKeyInfoCards from './components/ApiKeyInfoCards';
 import ApiKeyModal from './components/ApiKeyModal';
 
@@ -30,6 +31,10 @@ export default function ApiKey() {
   const keys = apiKeysData?.keys || [];
   const totalKeys = apiKeysData?.total_keys || keys.length;
   const canCreate = apiKeysData?.can_create ?? (totalKeys < 2);
+
+  if (isLoadingKeys) {
+    return <LoadingState text="Carregando chaves de API..." />;
+  }
 
   const handleGenerateKey = async () => {
     if (!canCreate) {

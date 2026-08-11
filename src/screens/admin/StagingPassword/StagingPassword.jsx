@@ -5,16 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { toast } from 'sonner';
 import { useGenerateStagingPasswordMutation, useGetStagingPasswordStatusQuery } from '@/services/api';
 import { colors } from "@/constants/colors";
+import LoadingState from '@/components/LoadingState';
 import StagingPasswordModal from './components/StagingPasswordModal';
 
 export default function StagingPassword() {
   const [generateStagingPassword, { isLoading, error }] = useGenerateStagingPasswordMutation();
-  const { data: statusData, refetch: refetchStatus } = useGetStagingPasswordStatusQuery();
+  const { data: statusData, isLoading: isLoadingStatus, refetch: refetchStatus } = useGetStagingPasswordStatusQuery();
 
   const [generatedPassword, setGeneratedPassword] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [copied, setCopied] = useState(false);
   const [generatedAt, setGeneratedAt] = useState(null);
+
+  if (isLoadingStatus) {
+    return <LoadingState text="Carregando..." />;
+  }
 
   const handleGenerate = async () => {
     const confirmed = window.confirm(

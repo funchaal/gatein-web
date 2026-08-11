@@ -145,6 +145,10 @@ export default function CompanyServices() {
 
   // ── VIEW: LIST MODE ────────────────────────────────────────────────
   if (viewMode === 'list') {
+    if (isLoading) {
+      return <LoadingState text="Carregando serviços..." />;
+    }
+
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">

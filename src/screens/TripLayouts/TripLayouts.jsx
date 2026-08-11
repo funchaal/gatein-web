@@ -452,7 +452,7 @@ export default function TripLayouts() {
 
   // Handle active fetch loading indicator
   if (loadingLayouts) {
-    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando layouts..." /></div>;
+    return <LoadingState text="Carregando layouts..." />;
   }
 
   // 1. Conditionally render Dashboard List View

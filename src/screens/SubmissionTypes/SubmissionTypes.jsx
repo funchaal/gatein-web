@@ -255,7 +255,7 @@ export default function SubmissionTypes() {
   };
 
   if (isLoading) {
-    return <div className="min-h-[60vh] flex items-center justify-center w-full"><LoadingState text="Carregando tipos de envio..." /></div>;
+    return <LoadingState text="Carregando tipos de envio..." />;
   }
 
   // --- LIST VIEW ---
