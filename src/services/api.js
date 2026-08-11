@@ -2,18 +2,34 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/web';
 
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: API_BASE_URL,
+  prepareHeaders: (headers) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await rawBaseQuery(args, api, extraOptions);
+
+  if (result.error && result.error.status === 401) {
+    const url = typeof args === 'string' ? args : args?.url;
+    if (url !== '/auth/login') {
+      api.dispatch({ type: 'auth/logout' });
+      api.dispatch(api.util.resetApiState());
+    }
+  }
+
+  return result;
+};
+
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['Auth', 'User', 'Company', 'Geofence', 'Schema', 'Dashboard', 'ApiKey', 'Layout', 'TicketLayout', 'Service', 'Announcement', 'SubmissionType', 'Submission'],
   endpoints: (builder) => ({
     // --- AUTH ---

@@ -30,6 +30,7 @@ const authSlice = createSlice({
       state.user = initialUser;
       state.isAuthenticated = false;
       state.isOffline = false;
+      state.isAppLoading = false;
       state.error = null;
       localStorage.removeItem('token');
     },
