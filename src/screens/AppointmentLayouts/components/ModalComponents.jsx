@@ -29,9 +29,9 @@ export function ModalSectionElement({ title, fields, data }) {
 
 export function ModalFieldElement({ label, field, data }) {
   const styles = {
-    container: { paddingTop: 6, paddingBottom: 6, marginTop: 0, marginBottom: 0, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    label: { fontSize: 16, color: THEME.slate400, fontWeight: 500, marginBottom: 2, textTransform: "capitalize" },
-    value: { fontSize: 16, color: '#334155', fontWeight: 600 }
+    container: { paddingTop: 6, paddingBottom: 6, marginTop: 0, marginBottom: 0, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' },
+    label: { fontSize: 16, color: THEME.slate400, fontWeight: 500, marginBottom: 2, textTransform: "capitalize", flex: 1, maxWidth: "50%", wordBreak: "break-word" },
+    value: { fontSize: 16, color: '#334155', fontWeight: 600, flex: 1, maxWidth: "50%", textAlign: "right", wordBreak: "break-word" }
   };
 
   const value = field ? get(data, field) : null;

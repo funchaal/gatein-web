@@ -89,7 +89,8 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-start;
+          gap: 8px;
           padding-top: 6px;
           padding-bottom: 6px;
           margin-top: 0;
@@ -102,11 +103,18 @@ export default function TicketPreview({ data, config, apptCardLayout }) {
           font-weight: 500;
           margin-bottom: 2px;
           text-transform: capitalize;
+          flex: 1;
+          max-width: 50%;
+          word-break: break-word;
         }
         .field-value {
           font-size: 16px;
           font-weight: 600;
           color: #334155;
+          flex: 1;
+          max-width: 50%;
+          text-align: right;
+          word-break: break-word;
         }
 
         /* Section styling */

@@ -47,9 +47,9 @@ export function CardHeaderElement({ header, subHeader, data }) {
 
 export function CardRowElement({ row, data }) {
   const styles = {
-    container: { display: "flex", flexDirection: 'row', justifyContent: "space-between", alignItems: "center", marginBottom: 2, paddingBlock: 2 },
-    label: { fontSize: 14, color: THEME.slate400, fontWeight: 500, textTransform: "capitalize" },
-    value: { fontSize: 14, color: THEME.slate900, fontWeight: 600 }
+    container: { display: "flex", flexDirection: 'row', justifyContent: "space-between", alignItems: "flex-start", gap: "8px", marginBottom: 2, paddingBlock: 2 },
+    label: { fontSize: 14, color: THEME.slate400, fontWeight: 500, textTransform: "capitalize", flex: 1, maxWidth: "50%", wordBreak: "break-word" },
+    value: { fontSize: 14, color: THEME.slate900, fontWeight: 600, flex: 1, maxWidth: "50%", textAlign: "right", wordBreak: "break-word" }
   };
 
   const val = row.field ? get(data, row.field) : null;

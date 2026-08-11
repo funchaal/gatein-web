@@ -105,7 +105,7 @@ export default function Users() {
       handleCloseModal();
     } catch (err) {
       if (err?.data?.detail?.code === 'USERNAME_EXISTS' || err?.status === 409) {
-        setUsernameError(err?.data?.detail?.message || 'Este nome de usuário já está em uso.');
+        setUsernameError(err?.data?.detail?.message || 'Este nome de usuário já está em uso');
       } else {
         const msg = err?.data?.detail?.message ?? 'Erro ao salvar usuário.';
         toast.error(msg);

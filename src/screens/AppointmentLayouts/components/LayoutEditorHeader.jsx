@@ -69,7 +69,7 @@ export default function LayoutEditorHeader({
           </div>
           {validation.titleExists && (
             <span className="absolute -bottom-4 right-0 text-[10px] text-red-500 font-semibold">
-              '{saveTitle.trim()}' já está em uso.
+              '{saveTitle.trim()}' já está em uso
             </span>
           )}
         </div>
@@ -92,7 +92,7 @@ export default function LayoutEditorHeader({
           </div>
           {validation.refExists && !isEditing && (
             <span className="absolute -bottom-4 right-0 text-[10px] text-red-500 font-semibold">
-              '{saveRef.trim()}' já está em uso.
+              '{saveRef.trim()}' já está em uso
             </span>
           )}
         </div>

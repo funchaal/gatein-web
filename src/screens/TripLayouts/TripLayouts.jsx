@@ -393,6 +393,10 @@ export default function TripLayouts() {
   const handleJsonChange = (parsed) => {
     if (!parsed || typeof parsed !== "object") return;
 
+    // Support both { ref, title, layout: { card_layout, modal_layout } }
+    // and legacy { ref, title, layout_data: { card_layout, modal_layout } } formats
+    const data = parsed.layout || parsed.layout_data || parsed;
+
     if (parsed.ref !== undefined) {
       setSaveRef(parsed.ref);
     } else if (parsed.layout_ref !== undefined) {
@@ -407,12 +411,12 @@ export default function TripLayouts() {
 
     setLayout({
       card_layout: {
-        header: parsed.card_layout?.header || {},
-        sub_header: parsed.card_layout?.sub_header || {},
-        status_tags: (parsed.card_layout?.status_tags || []).map(t => ({ ...t, id: t.id || uid() })),
-        body_rows: (parsed.card_layout?.body_rows || []).map(r => ({ ...r, id: r.id || uid() })),
+        header: data.card_layout?.header || {},
+        sub_header: data.card_layout?.sub_header || {},
+        status_tags: (data.card_layout?.status_tags || []).map(t => ({ ...t, id: t.id || uid() })),
+        body_rows: (data.card_layout?.body_rows || []).map(r => ({ ...r, id: r.id || uid() })),
       },
-      modal_layout: (parsed.modal_layout || []).map(m => {
+      modal_layout: (data.modal_layout || []).map(m => {
         const copy = { ...m, id: m.id || uid() };
         if (copy.element === "section" && copy.fields) {
           copy.fields = copy.fields.map(f => ({ ...f, id: f.id || uid() }));
@@ -420,8 +424,8 @@ export default function TripLayouts() {
         return copy;
       })
     });
-    if (parsed.example_data) {
-      setExampleData(parsed.example_data);
+    if (data.example_data) {
+      setExampleData(data.example_data);
     }
   };
 
@@ -439,7 +443,7 @@ export default function TripLayouts() {
 
     try {
       const cleaned = cleanLayout();
-      await upsertTripLayout({ ref: saveRef, title: saveTitle, layout_data: cleaned }).unwrap();
+      await upsertTripLayout({ ref: saveRef, title: saveTitle, layout: cleaned }).unwrap();
       setSaved(true);
       setOriginalState({
         title: saveTitle,
@@ -464,7 +468,7 @@ export default function TripLayouts() {
     return {
       ref: saveRef,
       title: saveTitle,
-      ...cleanLayoutData(layout),
+      layout: cleanLayoutData(layout),
     };
   }, [saveRef, saveTitle, layout]);
 

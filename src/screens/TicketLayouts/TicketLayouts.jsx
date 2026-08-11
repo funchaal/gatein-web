@@ -405,7 +405,7 @@ export default function TicketLayouts() {
 
     try {
       const cleaned = cleanLayout();
-      await upsertTicketLayout({ ref: saveRef, title: saveTitle, layout_data: cleaned }).unwrap();
+      await upsertTicketLayout({ ref: saveRef, title: saveTitle, layout: cleaned }).unwrap();
       setSaved(true);
       setOriginalState({
         title: saveTitle,
@@ -494,6 +494,10 @@ export default function TicketLayouts() {
       }
     }
 
+    // Support both { ref, title, layout: { elements, appt_card_layout } }
+    // and legacy { ref, title, layout_data: { elements, appt_card_layout } } formats
+    const data = (parsed && typeof parsed === 'object') ? (parsed.layout || parsed.layout_data || parsed) : parsed;
+
     // If it's the old array format
     if (Array.isArray(parsed)) {
       setLayout(
@@ -511,11 +515,11 @@ export default function TicketLayouts() {
           return copy;
         })
       );
-    } else if (parsed && typeof parsed === 'object') {
-      // New format object
-      if (parsed.elements && Array.isArray(parsed.elements)) {
+    } else if (data && typeof data === 'object') {
+      // New format object (with or without layout wrapper)
+      if (data.elements && Array.isArray(data.elements)) {
         setLayout(
-          parsed.elements.map(el => {
+          data.elements.map(el => {
             const copy = { ...el, id: el.id || uid() };
             if (copy.element === "section" && copy.fields) {
               copy.fields = copy.fields.map(field => ({ ...field, id: field.id || uid() }));
@@ -530,25 +534,25 @@ export default function TicketLayouts() {
           })
         );
       }
-      if (parsed.example_data) {
-        setExampleData(parsed.example_data);
+      if (data.example_data) {
+        setExampleData(data.example_data);
       }
-      if (parsed.appt_card_layout !== undefined) {
-        setApptCardLayoutCustom(parsed.appt_card_layout);
+      if (data.appt_card_layout !== undefined) {
+        setApptCardLayoutCustom(data.appt_card_layout);
       }
     }
   };
 
   const tabJsonObj = useMemo(() => {
-    const obj = {
+    const layoutData = {
+      elements: cleanLayoutData(layout),
+      ...(apptCardLayoutCustom ? { appt_card_layout: apptCardLayoutCustom } : {}),
+    };
+    return {
       ref: saveRef,
       title: saveTitle,
-      elements: cleanLayoutData(layout),
+      layout: layoutData,
     };
-    if (apptCardLayoutCustom) {
-      obj.appt_card_layout = apptCardLayoutCustom;
-    }
-    return obj;
   }, [saveRef, saveTitle, layout, apptCardLayoutCustom]);
 
   const jsonStr = useMemo(() => JSON.stringify(tabJsonObj, null, 2), [tabJsonObj]);
