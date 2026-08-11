@@ -13,13 +13,13 @@ const THEME = {
 export function CardHeaderElement({ header, subHeader, data }) {
   const styles = {
     container: { marginBottom: 2, gap: 2, display: "flex", flexDirection: "column" },
-    group: { display: "flex", flexDirection: "column" },
+    group: { display: "flex", flexDirection: "column", gap: 0 },
     label: { fontSize: 14, color: THEME.slate400, fontWeight: 500, marginBottom: 0, textTransform: "capitalize" },
-    value: { fontSize: 26, fontWeight: 800, color: THEME.slate900, wordBreak: "break-word", lineHeight: 1.1 },
+    value: { fontSize: 26, fontWeight: 800, color: THEME.slate900, wordBreak: "break-word" },
     empty: { fontSize: 14, color: "#CBD5E1", fontStyle: "italic" },
-    subGroup: { display: "flex", flexDirection: "column" },
+    subGroup: { display: "flex", flexDirection: "column", gap: 0 },
     subLabel: { fontSize: 14, color: THEME.slate400, fontWeight: 500, marginBottom: 0, textTransform: "capitalize" },
-    subValue: { fontSize: 20, fontWeight: 500, color: THEME.slate600 },
+    subValue: { fontSize: 20, fontWeight: 500, color: THEME.slate600, wordBreak: "break-word" },
   };
 
   const headerVal = header?.field ? get(data, header.field) : null;
