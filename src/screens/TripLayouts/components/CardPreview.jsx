@@ -81,12 +81,14 @@ export function CardPreview({ data, config }) {
           <div style={{ marginBottom: 12, display: "flex", flexDirection: "column", gap: 2 }}>
 
             {/* Trip destination row */}
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
-              <span style={{ marginRight: 4, fontSize: 15, color: "#9778ff" }}>📍</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b", marginRight: 4 }}>Destino:</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
+            <div style={{ marginBottom: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+                <span style={{ marginRight: 4, fontSize: 15, color: "#9778ff" }}>📍</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#64748b" }}>Destino</span>
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#1e293b", paddingLeft: 20, whiteSpace: "normal", wordBreak: "break-word" }}>
                 {destination}
-              </span>
+              </div>
             </div>
 
             <CardHeaderElement header={header} subHeader={sub_header} data={data} />

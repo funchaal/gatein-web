@@ -59,6 +59,12 @@ export default function LeafletMap({ lat, lng, radius, onMapClick }) {
         const L = window.L;
         if (!L || !L.map) return;
 
+        const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+        const keyQuery = cartoKey ? `?key=${cartoKey}` : '';
+        const getTileUrl = (dark) => dark
+            ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png${keyQuery}`
+            : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${keyQuery}`;
+
         if (!mapInstanceRef.current) {
             mapInstanceRef.current = L.map(mapContainerRef.current, {
                 center: [lat, lng],
@@ -66,16 +72,12 @@ export default function LeafletMap({ lat, lng, radius, onMapClick }) {
                 attributionControl: false,
                 zoomControl: true
             });
-            const tileUrl = isDark 
-                ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-            tileLayerRef.current = L.tileLayer(tileUrl, {
-                maxZoom: 20
+            tileLayerRef.current = L.tileLayer(getTileUrl(isDark), {
+                maxZoom: 20,
+                subdomains: 'abcd'
             }).addTo(mapInstanceRef.current);
         } else if (tileLayerRef.current) {
-            const currentUrl = isDark 
-                ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+            const currentUrl = getTileUrl(isDark);
             if (tileLayerRef.current._url !== currentUrl) {
                 tileLayerRef.current.setUrl(currentUrl);
             }

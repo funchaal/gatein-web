@@ -57,22 +57,26 @@ export default function Submissions() {
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "EDITED":
-        return (
+  const getStatusBadge = (status, isEdited = false) => {
+    if (status === "CANCELLED") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400 border border-red-200 dark:border-red-800">
+          <X className="w-3 h-3" /> Cancelado
+        </span>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+          <CheckCircle className="w-3 h-3" /> Enviado
+        </span>
+        {isEdited && (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
             <Pencil className="w-3 h-3" /> Editado
           </span>
-        );
-      case "SENT":
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            <CheckCircle className="w-3 h-3" /> Enviado
-          </span>
-        );
-    }
+        )}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -190,7 +194,7 @@ export default function Submissions() {
                         )}
                       </td>
 
-                      <td className="px-6 py-4">{getStatusBadge(item.status)}</td>
+                      <td className="px-6 py-4">{getStatusBadge(item.status, item.is_edited)}</td>
 
                       <td className="px-6 py-4 text-right">
                         <Button
@@ -226,7 +230,7 @@ export default function Submissions() {
                       <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                         {detailData.type_title}
                       </h2>
-                      {getStatusBadge(detailData.status)}
+                      {getStatusBadge(detailData.status, detailData.is_edited)}
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       Enviado em {formatDate(detailData.created_at)}

@@ -109,16 +109,16 @@ export function ModalPreview({ data, config }) {
                   }}>
                     <div style={{ flex: 3 }}>
                       <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>De</div>
-                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>
+                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "normal", wordBreak: "break-word" }}>{origin}</div>
                     </div>
                     <div style={{ flex: 4, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", padding: "0 8px" }}>
                       <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
-                      <span style={{ margin: "0 8px", fontSize: 16 }}>\U0001F69A</span>
+                      <span style={{ margin: "0 8px", fontSize: 16 }}>🚚</span>
                       <div style={{ flex: 1, borderTop: "2px dashed #cbd5e1", height: 0 }} />
                     </div>
                     <div style={{ flex: 3, textAlign: "right" }}>
                       <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: "600", textTransform: "uppercase", marginBottom: 2 }}>Para</div>
-                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{destination}</div>
+                      <div style={{ fontSize: 13, fontWeight: "700", color: "#0f172a", whiteSpace: "normal", wordBreak: "break-word" }}>{destination}</div>
                     </div>
                   </div>
                 </div>

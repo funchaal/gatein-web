@@ -37,7 +37,19 @@ export default function CompanyInfo() {
     return JSON.stringify(userFormData) !== JSON.stringify(data);
   }, [userFormData, data]);
 
-  const isValid = !!formData?.name?.trim();
+  const isValidVideoUrl = (url) => {
+    if (!url) return false;
+    const ytRegex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    if (url.match(ytRegex)) return true;
+    if (url.endsWith('.mp4') || url.includes('.m3u8')) return true;
+    return false;
+  };
+
+  const isSafetyValid = formData?.safety_integration?.active 
+    ? isValidVideoUrl(formData.safety_integration.video_url)
+    : true;
+
+  const isValid = !!formData?.name?.trim() && isSafetyValid;
   const canSave = hasChanges && isValid;
 
   // --- Handlers ---

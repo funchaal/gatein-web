@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import {
-  Bell, Search, Edit2, Trash2, Plus, Image as ImageIcon, Calendar, Loader2, Info, ArrowLeft, Smartphone, AlertCircle, Upload, X
+  Bell, Search, Edit2, Trash2, Plus, Image as ImageIcon, Calendar, Loader2, Info, ArrowLeft, Smartphone, AlertCircle, Upload, X,
+  ZoomIn, ZoomOut, RotateCcw, Move
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,87 @@ import { ActionButton } from '@/components/ui/ActionButton';
 import { colors } from "@/constants/colors";
 import LoadingState from '@/components/LoadingState';
 import { compressToWebP, uploadToR2 } from '@/lib/imageUpload';
+
+export const getAnnouncementImageStyle = (position, naturalSize) => {
+  const scale = position?.scale ?? 1;
+  const x = position?.x ?? 50;
+  const y = position?.y ?? 50;
+
+  const Ac = 14 / 9;
+  const naturalW = naturalSize?.width || position?.natural_width || 14;
+  const naturalH = naturalSize?.height || position?.natural_height || 9;
+  const Aimg = naturalW && naturalH ? naturalW / naturalH : (position?.aspect_ratio || Ac);
+
+  let widthRatio = 1;
+  let heightRatio = 1;
+
+  if (Aimg >= Ac) {
+    heightRatio = scale;
+    widthRatio = (Aimg / Ac) * scale;
+  } else {
+    widthRatio = scale;
+    heightRatio = (Ac / Aimg) * scale;
+  }
+
+  const maxX = Math.max(0, (widthRatio - 1) / 2);
+  const maxY = Math.max(0, (heightRatio - 1) / 2);
+
+  const panX = ((x - 50) / 50) * maxX;
+  const panY = ((y - 50) / 50) * maxY;
+
+  const leftPercent = (0.5 - widthRatio / 2 + panX) * 100;
+  const topPercent = (0.5 - heightRatio / 2 + panY) * 100;
+  const widthPercent = widthRatio * 100;
+  const heightPercent = heightRatio * 100;
+
+  return {
+    width: `${widthPercent}%`,
+    height: `${heightPercent}%`,
+    left: `${leftPercent}%`,
+    top: `${topPercent}%`,
+  };
+};
+
+function AnnouncementThumbnail({ imageUrl, position }) {
+  const [naturalSize, setNaturalSize] = useState(null);
+
+  const isLegacy = position?.scale === undefined && position?.aspect_ratio === undefined && position?.y !== undefined && position?.y !== 50;
+
+  if (isLegacy) {
+    return (
+      <img
+        src={imageUrl}
+        alt="Thumb"
+        className="absolute w-full h-[180%] max-w-none pointer-events-none"
+        style={{
+          top: `${-((position.y / 100) * 80)}%`,
+          left: 0,
+          objectFit: 'cover'
+        }}
+      />
+    );
+  }
+
+  const style = getAnnouncementImageStyle(position, naturalSize);
+
+  return (
+    <img
+      src={imageUrl}
+      alt="Thumb"
+      className="absolute max-w-none pointer-events-none"
+      style={{
+        ...style,
+        objectFit: 'cover',
+      }}
+      onLoad={(e) => {
+        setNaturalSize({
+          width: e.target.naturalWidth,
+          height: e.target.naturalHeight,
+        });
+      }}
+    />
+  );
+}
 
 export default function Announcements() {
   const { data: announcementsData, isLoading, isError } = useGetAnnouncementsQuery();
@@ -41,12 +123,15 @@ export default function Announcements() {
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const [imgNaturalSize, setImgNaturalSize] = useState({ width: 0, height: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
     description: '',
     image_url: '',
-    image_position: { x: 50, y: 50 },
+    image_position: { x: 50, y: 50, scale: 1 },
     url: '',
     is_active: true,
     start_at: '',
@@ -61,12 +146,13 @@ export default function Announcements() {
       subtitle: '',
       description: '',
       image_url: '',
-      image_position: { x: 50, y: 50 },
+      image_position: { x: 50, y: 50, scale: 1 },
       url: '',
       is_active: true,
       start_at: '',
       end_at: '',
     });
+    setImgNaturalSize({ width: 0, height: 0 });
     setSelectedImageFile(null);
     setEditingAnnouncement(null);
     if (fileInputRef.current) {
@@ -83,10 +169,11 @@ export default function Announcements() {
     }
     const localUrl = URL.createObjectURL(file);
     setSelectedImageFile(file);
+    setImgNaturalSize({ width: 0, height: 0 });
     setFormData((prev) => ({
       ...prev,
       image_url: localUrl,
-      image_position: { x: 50, y: 50 },
+      image_position: { x: 50, y: 50, scale: 1 },
     }));
   };
 
@@ -107,17 +194,24 @@ export default function Announcements() {
       setEditingAnnouncement(announcement);
       const startLocal = announcement.start_at ? announcement.start_at.substring(0, 16) : '';
       const endLocal = announcement.end_at ? announcement.end_at.substring(0, 16) : '';
+      const pos = announcement.image_position || {};
       setFormData({
         title: announcement.title ?? '',
         subtitle: announcement.subtitle ?? '',
         description: announcement.description ?? '',
         image_url: announcement.image_url ?? '',
-        image_position: announcement.image_position ?? { x: 50, y: 50 },
+        image_position: {
+          x: pos.x ?? 50,
+          y: pos.y ?? 50,
+          scale: pos.scale ?? 1,
+          aspect_ratio: pos.aspect_ratio,
+        },
         url: announcement.url ?? '',
         is_active: announcement.is_active ?? true,
         start_at: startLocal,
         end_at: endLocal,
       });
+      setImgNaturalSize({ width: 0, height: 0 });
     } else {
       resetForm();
     }
@@ -132,26 +226,95 @@ export default function Announcements() {
   const handleDragStart = (e) => {
     if (!previewContainerRef.current || !formData.image_url) return;
     e.preventDefault();
+
     const rect = previewContainerRef.current.getBoundingClientRect();
-    const startY = e.clientY;
+    const startX = e.clientX ?? e.touches?.[0]?.clientX;
+    const startY = e.clientY ?? e.touches?.[0]?.clientY;
+    if (startX === undefined || startY === undefined) return;
+
+    setIsDragging(true);
+
+    const startPosX = formData.image_position?.x ?? 50;
     const startPosY = formData.image_position?.y ?? 50;
+    const scale = formData.image_position?.scale ?? 1;
+
+    const Ac = 14 / 9;
+    const naturalW = imgNaturalSize.width || formData.image_position?.natural_width || 14;
+    const naturalH = imgNaturalSize.height || formData.image_position?.natural_height || 9;
+    const Aimg = naturalW && naturalH ? naturalW / naturalH : (formData.image_position?.aspect_ratio || Ac);
+
+    let widthRatio = 1;
+    let heightRatio = 1;
+    if (Aimg >= Ac) {
+      heightRatio = scale;
+      widthRatio = (Aimg / Ac) * scale;
+    } else {
+      widthRatio = scale;
+      heightRatio = (Ac / Aimg) * scale;
+    }
+
+    const maxXRatio = Math.max(0, (widthRatio - 1) / 2);
+    const maxYRatio = Math.max(0, (heightRatio - 1) / 2);
 
     const handleDragMove = (moveEvent) => {
-      const deltaY = moveEvent.clientY - startY;
-      const newY = Math.max(0, Math.min(100, Math.round(startPosY - (deltaY / rect.height) * 100)));
-      setFormData(prev => ({
+      const currentX = moveEvent.clientX ?? moveEvent.touches?.[0]?.clientX;
+      const currentY = moveEvent.clientY ?? moveEvent.touches?.[0]?.clientY;
+      if (currentX === undefined || currentY === undefined) return;
+
+      const deltaX = currentX - startX;
+      const deltaY = currentY - startY;
+
+      let newX = startPosX;
+      if (maxXRatio > 0 && rect.width > 0) {
+        const deltaXPos = (deltaX / (rect.width * maxXRatio)) * 50;
+        newX = Math.max(0, Math.min(100, Math.round(startPosX + deltaXPos)));
+      }
+
+      let newY = startPosY;
+      if (maxYRatio > 0 && rect.height > 0) {
+        const deltaYPos = (deltaY / (rect.height * maxYRatio)) * 50;
+        newY = Math.max(0, Math.min(100, Math.round(startPosY + deltaYPos)));
+      }
+
+      setFormData((prev) => ({
         ...prev,
-        image_position: { x: 50, y: newY }
+        image_position: {
+          ...prev.image_position,
+          x: newX,
+          y: newY,
+        },
       }));
     };
 
     const handleDragEnd = () => {
-      document.removeEventListener('mousemove', handleDragMove);
-      document.removeEventListener('mouseup', handleDragEnd);
+      setIsDragging(false);
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchmove', handleDragMove);
+      window.removeEventListener('touchend', handleDragEnd);
     };
 
-    document.addEventListener('mousemove', handleDragMove);
-    document.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('touchmove', handleDragMove);
+    window.addEventListener('touchend', handleDragEnd);
+  };
+
+  const handleWheel = (e) => {
+    if (!formData.image_url) return;
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.05 : -0.05;
+    setFormData((prev) => {
+      const currentScale = prev.image_position?.scale ?? 1;
+      const newScale = Math.max(1, Math.min(3, Math.round((currentScale + delta) * 100) / 100));
+      return {
+        ...prev,
+        image_position: {
+          ...prev.image_position,
+          scale: newScale,
+        },
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -341,15 +504,9 @@ export default function Announcements() {
                               style={{ aspectRatio: '14 / 9' }}
                             >
                               {item.image_url ? (
-                                <img
-                                  src={item.image_url}
-                                  alt="Thumb"
-                                  className="absolute w-full h-[180%] max-w-none pointer-events-none"
-                                  style={{
-                                    top: `${-((item.image_position?.y ?? 50) / 100) * 80}%`,
-                                    left: 0,
-                                    objectFit: 'cover'
-                                  }}
+                                <AnnouncementThumbnail
+                                  imageUrl={item.image_url}
+                                  position={item.image_position}
                                 />
                               ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -591,36 +748,52 @@ export default function Announcements() {
                 </CardTitle>
                 <CardDescription>Veja em tempo real como o banner será exibido no celular do motorista.</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col items-center justify-center p-6 bg-white">
+              <CardContent className="flex flex-col items-center justify-center p-6 bg-white dark:bg-card">
                 {/* Phone Aspect Container */}
                 <div
                   ref={previewContainerRef}
                   onMouseDown={handleDragStart}
-                  className="relative w-full overflow-hidden bg-white rounded-2xl border border-gray-200 select-none shadow-lg cursor-move"
+                  onTouchStart={handleDragStart}
+                  onWheel={handleWheel}
+                  className={`relative w-full overflow-hidden bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 select-none shadow-lg transition-shadow ${
+                    formData.image_url
+                      ? isDragging
+                        ? 'cursor-grabbing'
+                        : 'cursor-grab hover:ring-2 hover:ring-orange-500/40'
+                      : ''
+                  }`}
                   style={{ aspectRatio: '14 / 9' }}
-                  title={formData.image_url ? 'Clique e arraste verticalmente para reposicionar a imagem' : ''}
+                  title={formData.image_url ? 'Clique e arraste para reposicionar a imagem' : ''}
                 >
                   {formData.image_url ? (
                     <img
                       src={formData.image_url}
                       alt="Aviso Preview"
-                      className="absolute w-full h-[180%] max-w-none pointer-events-none select-none"
-                      style={{
-                        top: `${-((formData.image_position?.y ?? 50) / 100) * 80}%`,
-                        left: 0,
-                        objectFit: 'cover'
-                      }}
+                      className="absolute max-w-none pointer-events-none select-none"
+                      style={getAnnouncementImageStyle(formData.image_position, imgNaturalSize)}
                       onError={(e) => {
                         e.target.style.opacity = 0;
                       }}
                       onLoad={(e) => {
                         e.target.style.opacity = 1;
+                        const nw = e.target.naturalWidth;
+                        const nh = e.target.naturalHeight;
+                        setImgNaturalSize({ width: nw, height: nh });
+                        if (nw && nh) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            image_position: {
+                              ...prev.image_position,
+                              aspect_ratio: Math.round((nw / nh) * 1000) / 1000,
+                            },
+                          }));
+                        }
                       }}
                     />
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-white">
-                      <ImageIcon className="w-8 h-8 mb-2 text-gray-300" />
-                      <span className="text-xs text-gray-500">Selecione uma imagem no formulário</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-50 dark:bg-gray-900">
+                      <ImageIcon className="w-8 h-8 mb-2 text-gray-300 dark:text-gray-600" />
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Selecione uma imagem no formulário</span>
                     </div>
                   )}
 
@@ -639,10 +812,98 @@ export default function Announcements() {
                 </div>
 
                 {formData.image_url && (
-                  <span className="text-[10px] text-gray-400 mt-3 flex items-center gap-1">
-                    <Info className="w-3.5 h-3.5" />
-                    Arrastar a imagem verticalmente no preview ajusta o corte do banner.
-                  </span>
+                  <div className="w-full flex flex-col gap-3 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                      <span className="font-medium flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                        <Move className="w-3.5 h-3.5 text-orange-500" />
+                        Enquadramento & Zoom
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            image_position: {
+                              ...prev.image_position,
+                              x: 50,
+                              y: 50,
+                              scale: 1,
+                            },
+                          }));
+                        }}
+                        className="flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 dark:text-orange-400 hover:underline font-medium cursor-pointer"
+                        title="Restaurar posição central e zoom 100%"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        Centralizar
+                      </button>
+                    </div>
+
+                    {/* Zoom slider bar */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            image_position: {
+                              ...prev.image_position,
+                              scale: Math.max(1, Math.round(((prev.image_position?.scale ?? 1) - 0.1) * 100) / 100),
+                            },
+                          }));
+                        }}
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        title="Diminuir Zoom"
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </button>
+
+                      <input
+                        type="range"
+                        min="1.0"
+                        max="3.0"
+                        step="0.05"
+                        value={formData.image_position?.scale ?? 1}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          setFormData((prev) => ({
+                            ...prev,
+                            image_position: {
+                              ...prev.image_position,
+                              scale: val,
+                            },
+                          }));
+                        }}
+                        className="flex-1 accent-orange-500 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg cursor-pointer"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            image_position: {
+                              ...prev.image_position,
+                              scale: Math.min(3, Math.round(((prev.image_position?.scale ?? 1) + 0.1) * 100) / 100),
+                            },
+                          }));
+                        }}
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        title="Aumentar Zoom"
+                      >
+                        <ZoomIn className="w-4 h-4" />
+                      </button>
+
+                      <span className="text-xs font-mono font-medium text-gray-600 dark:text-gray-300 w-12 text-right">
+                        {Math.round((formData.image_position?.scale ?? 1) * 100)}%
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5 flex-shrink-0" />
+                      Arraste a imagem em qualquer direção para posicionar. Use o slider ou o scroll do mouse para regular o zoom.
+                    </span>
+                  </div>
                 )}
               </CardContent>
             </Card>

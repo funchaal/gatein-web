@@ -2,8 +2,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 import { ContainerHeader } from '@/components/ui/ContainerHeader';
+
+const isValidVideoUrl = (url) => {
+  if (!url) return false;
+  const ytRegex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  if (url.match(ytRegex)) return true;
+  if (url.endsWith('.mp4') || url.includes('.m3u8')) return true;
+  return false;
+};
+
+const getYouTubeId = (url) => {
+  if (!url) return null;
+  const ytRegex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(ytRegex);
+  return (match && match[2]?.length === 11) ? match[2] : null;
+};
 
 export default function SafetyIntegrationCard({ formData, handleInputChange, canWrite }) {
   const safetyIntegration = formData.safety_integration || {
@@ -23,6 +38,9 @@ export default function SafetyIntegrationCard({ formData, handleInputChange, can
       }
     });
   };
+
+  const isVideoValid = isValidVideoUrl(safetyIntegration.video_url);
+  const ytId = getYouTubeId(safetyIntegration.video_url);
 
   return (
     <Card className="border-gray-200 dark:border-0 shadow-none overflow-hidden mt-4">
@@ -55,7 +73,40 @@ export default function SafetyIntegrationCard({ formData, handleInputChange, can
                 value={safetyIntegration.video_url || ''}
                 onChange={handleInputChange}
                 readOnly={!canWrite}
+                className={!isVideoValid && safetyIntegration.video_url ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
+              {!isVideoValid && safetyIntegration.video_url && (
+                <div className="flex items-center gap-1.5 text-red-500 text-xs mt-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>O link do vídeo parece ser inválido. Use um link do YouTube ou um arquivo .mp4.</span>
+                </div>
+              )}
+              
+              {/* Video Preview */}
+              {isVideoValid && (
+                <div className="mt-3 aspect-video w-full max-w-sm rounded-md overflow-hidden bg-black border border-gray-200 dark:border-gray-800">
+                  {ytId ? (
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${ytId}`}
+                      title="Video Preview"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video
+                      width="100%"
+                      height="100%"
+                      controls
+                      src={safetyIntegration.video_url}
+                    >
+                      Seu navegador não suporta a tag de vídeo.
+                    </video>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="space-y-1.5">
